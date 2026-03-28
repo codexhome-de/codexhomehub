@@ -1,5 +1,5 @@
 #!/bin/bash
-#VERSION="2"
+#VERSION="4"
 # xattr -d com.apple.quarantine $HOME/Library/Mobile Documents/com~apple~CloudDocs/codexhome/30_Vorlagen/HA/codexhomehub.command
 
 REPO_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/codexhome/30_Vorlagen/HA"
@@ -58,4 +58,7 @@ git add -A
 git commit -m "$BESCHREIBUNG" --author="Codex Home <home@codexhome.de>"
 git push origin master 2>&1 || error "Hochladen fehlgeschlagen."
 
-success "✅ Gespeichert!\n\n\"$BESCHREIBUNG\"\n\nDeine Änderungen wurden erfolgreich übertragen.\n\nHA aktualisieren: 'cd /config/codexhomehub && git pull'"
+# Build message in bash to avoid quote issues inside AppleScript heredoc
+MSG="✅ Gespeichert!\n\n${BESCHREIBUNG}\n\nDeine Änderungen wurden erfolgreich übertragen.\n\nHA aktualisieren: 'cd /config/codexhomehub && git pull'"
+
+success "$MSG"
