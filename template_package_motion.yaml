@@ -1,13 +1,9 @@
-# ---------------------------------
-# !!! DIESE DATEI NICHT AENDERN !!!
-# ---------------------------------
-
 #VERSION="5"
 
 group:
   room_motion_sensors:
     name: Room Motion Sensors
-    entities: !include ../codexhome/sensors/room_sensors.yaml
+    entities: !include /config/codexhomehub/sensors/room_sensors.yaml
 
 
 input_boolean:
