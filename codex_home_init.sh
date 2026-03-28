@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#VERSION="3"
+#VERSION="4"
 
 BASE_DIR="${1:-$(dirname "$0")/..}"
 
