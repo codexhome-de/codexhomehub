@@ -1,8 +1,7 @@
 #!/bin/bash
 
-#VERSION="2"
+#VERSION="3"
 
-# ─── ROOMS ────────────────────────────────────────────────────────────────────
 ROOMS_FILE="$(dirname "$0")/rooms.cfg"
 
 if [ ! -f "$ROOMS_FILE" ]; then
@@ -12,29 +11,24 @@ fi
 
 readarray -t ROOMS < "$ROOMS_FILE"
 
-# ─── HELPERS ──────────────────────────────────────────────────────────────────
-capitalize() {
-  local -a words
-  read -ra words <<< "${1//_/ }"
-  echo "${words[@]^}"
+to_slug() {
+  echo "$1" | tr '[:upper:]' '[:lower:]' | tr ' ' '_'
 }
 
-# ─── PATHS ────────────────────────────────────────────────────────────────────
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"   # homeassistant/codexhome
-HA_DIR="$(dirname "$SCRIPT_DIR")"             # homeassistant
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+HA_DIR="$(dirname "$SCRIPT_DIR")"
 
 PACKAGES_DIR="$HA_DIR/packages"
 AUTOMATIONS_DIR="$HA_DIR/automations"
 SENSORS_DIR="$SCRIPT_DIR/sensors"
 
-# ─── DEPLOY ───────────────────────────────────────────────────────────────────
 DEPLOY_DATE=$(date +%Y%m%d)
 
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR" "$SENSORS_DIR"
 
 for room in "${ROOMS[@]}"; do
-  ROOM_LOWER=$room
-  ROOM_UPPER=$(capitalize "$room")
+  ROOM_UPPER="$room"
+  ROOM_LOWER=$(to_slug "$room")
 
   # Package
   cp "$SCRIPT_DIR/template_package_motion.yaml" "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
@@ -48,7 +42,7 @@ for room in "${ROOMS[@]}"; do
   sed -i "s/Room/${ROOM_UPPER}/g" "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
   sed -i "s/room/${ROOM_LOWER}/g" "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
 
-  # Sensors stub — only create if it doesn't exist yet
+  # Sensors
   SENSOR_FILE="$SENSORS_DIR/${ROOM_LOWER}_sensors.yaml"
   if [ ! -f "$SENSOR_FILE" ]; then
     cat > "$SENSOR_FILE" <<EOF

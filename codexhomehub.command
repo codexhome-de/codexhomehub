@@ -4,6 +4,8 @@
 # Falls Apple das Ausführen nicht erlaubt:
 # xattr -d com.apple.quarantine $HOME/Library/Mobile Documents/com~apple~CloudDocs/codexhome/30_Vorlagen/HA/codexhomehub.command
 
+#VERSION="2"
+
 # ── Konfiguration ────────────────────────────────────────────────────────────
 REPO_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/codexhome/30_Vorlagen/HA"
 # Falls das Repo woanders liegt, diesen Pfad anpassen ↑

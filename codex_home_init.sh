@@ -2,9 +2,6 @@
 
 #VERSION="3"
 
-# Setup script for Home Assistant initial configuration
-# Target: homeassistant/packages/ and homeassistant/automations/
-
 BASE_DIR="${1:-$(dirname "$0")/..}"
 
 PACKAGES_DIR="$BASE_DIR/packages"
@@ -12,7 +9,6 @@ AUTOMATIONS_DIR="$BASE_DIR/automations"
 
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR"
 
-# --- packages/tech_day_mode.yaml ---
 cat > "$PACKAGES_DIR/tech_day_mode.yaml" << 'EOF'
 input_select:
   tech_day_mode_hk:
@@ -25,7 +21,6 @@ input_select:
     initial: Evening
 EOF
 
-# --- automations/tech_day_mode.yaml ---
 cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
 - id: set_day_mode_sunrise
   alias: Set Day Mode - Sunrise
@@ -65,7 +60,6 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
         option: "Night"
 EOF
 
-# --- packages/tech_reminder.yaml ---
 cat > "$PACKAGES_DIR/tech_reminder.yaml" << 'EOF'
 input_boolean:
   reminder_trigger_hk:
