@@ -52,3 +52,4 @@ template:
             is_state('input_boolean.room_motion_day', 'on')
             or is_state('input_boolean.room_motion_evening', 'on')
             or is_state('input_boolean.room_motion_night', 'on')
+          }}
