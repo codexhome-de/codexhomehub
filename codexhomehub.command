@@ -58,5 +58,5 @@ git add -A
 git commit -m "$BESCHREIBUNG" --author="Codex Home <home@codexhome.de>"
 git push origin master 2>&1 || error "Hochladen fehlgeschlagen."
 
-MSG="✅ Gespeichert!\n\n${BESCHREIBUNG}\n\nDeine Änderungen wurden erfolgreich übertragen.\n\nHA aktualisieren:\ncd /config/codexhomehub && git pull"
+MSG="✅ Gespeichert!\n\n${BESCHREIBUNG}\n\nDeine Änderungen wurden erfolgreich übertragen.\n\nHA aktualisieren (dreifach Click zum selektieren):\n\ncd /config/codexhomehub && git pull"
 success "$MSG"

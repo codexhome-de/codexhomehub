@@ -22,7 +22,7 @@ input_select:
     name: Sunrise Offset
     options:
       - "-30 min"
-      - "0"
+      - "Sunrise"
       - "30 min"
       - "1 hour"
       - "1.5 hours"
@@ -31,41 +31,23 @@ input_select:
 EOF
 
 cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
-- id: set_day_mode_on_startup
-  alias: Set Day Mode On Startup
+- id: set_day_mode
+  alias: Set Day Mode
   trigger:
     - platform: homeassistant
       event: start
-
-  variables:
-    offset_hours: >
-      {% set map = {
-        "-30 min": -0.5,
-        "0": 0,
-        "30 min": 0.5,
-        "1 hour": 1,
-        "1.5 hours": 1.5,
-        "2 hours": 2
-      } %}
-      {{ map[states('input_select.sunrise_offset_hk')] }}
-
-    offset_td: >
-      {{ timedelta(hours=offset_hours) }}
-
-    next_rising: >
-      {{ as_datetime(state_attr('sun.sun','next_rising')) }}
-
-    next_setting: >
-      {{ as_datetime(state_attr('sun.sun','next_setting')) }}
-
-    sunrise_with_offset: >
-      {{ next_rising + offset_td }}
+    - platform: state
+      entity_id: input_select.sunrise_offset_hk
+    - platform: time_pattern
+      minutes: "/5"   # re-evaluate every 5 min (lightweight + reliable)
 
   action:
     - choose:
+        # Night (after 22:22)
         - conditions:
-            - condition: time
-              after: "22:22:00"
+            - condition: template
+              value_template: >
+                {{ now() >= today_at("22:22:00") }}
           sequence:
             - action: input_select.select_option
               target:
@@ -73,10 +55,20 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
               data:
                 option: "Night"
 
+        # Night (before sunrise + offset)
         - conditions:
             - condition: template
               value_template: >
-                {{ now() < sunrise_with_offset }}
+                {% set map = {
+                  "-30 min": -0.5,
+                  "Sunrise": 0,
+                  "30 min": 0.5,
+                  "1 hour": 1,
+                  "1.5 hours": 1.5,
+                  "2 hours": 2
+                } %}
+                {% set offset = timedelta(hours=map[states('input_select.sunrise_offset_hk')]) %}
+                {{ now() < (as_datetime(state_attr('sun.sun','next_rising')) + offset) }}
           sequence:
             - action: input_select.select_option
               target:
@@ -84,10 +76,21 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
               data:
                 option: "Night"
 
+        # Day (sunrise + offset → sunset)
         - conditions:
             - condition: template
               value_template: >
-                {{ now() >= sunrise_with_offset and now() < next_setting }}
+                {% set map = {
+                  "-30 min": -0.5,
+                  "0": 0,
+                  "30 min": 0.5,
+                  "1 hour": 1,
+                  "1.5 hours": 1.5,
+                  "2 hours": 2
+                } %}
+                {% set offset = timedelta(hours=map[states('input_select.sunrise_offset_hk')]) %}
+                {{ now() >= (as_datetime(state_attr('sun.sun','next_rising')) + offset)
+                   and now() < as_datetime(state_attr('sun.sun','next_setting')) }}
           sequence:
             - action: input_select.select_option
               target:
@@ -95,10 +98,12 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
               data:
                 option: "Day"
 
+        # Evening (sunset → 22:22)
         - conditions:
             - condition: template
               value_template: >
-                {{ now() >= next_setting and now() < today_at("22:22:00") }}
+                {{ now() >= as_datetime(state_attr('sun.sun','next_setting'))
+                   and now() < today_at("22:22:00") }}
           sequence:
             - action: input_select.select_option
               target:
