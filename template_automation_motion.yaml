@@ -1,0 +1,131 @@
+# ---------------------------------
+# !!! DIESE DATEI NICHT AENDERN !!!
+# ---------------------------------
+
+#VERSION="5"
+
+- alias: Room Motion
+  id: room_motion
+  mode: restart
+
+  trigger:
+    - platform: state
+      entity_id: group.room_motion_sensors
+      to: "on"
+      id: motion_on
+
+    - platform: time_pattern
+      seconds: "/30"
+      id: refresh
+
+    - platform: state
+      entity_id: group.room_motion_sensors
+      id: motion_changed
+
+    - platform: state
+      entity_id: input_select.tech_day_mode_hk
+      id: mode_changed
+
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.room_motion_hold
+      id: timer_finished
+
+  action:
+    # Start or refresh timer while motion is active
+    - choose:
+        - conditions:
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: motion_on
+                - condition: trigger
+                  id: refresh
+            - condition: state
+              entity_id: group.room_motion_sensors
+              state: "on"
+          sequence:
+            - service: timer.start
+              target:
+                entity_id: timer.room_motion_hold
+
+    # Set correct mode boolean while motion or timer is active
+    - choose:
+        - conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: group.room_motion_sensors
+                  state: "on"
+                - condition: state
+                  entity_id: timer.room_motion_hold
+                  state: "active"
+            - condition: state
+              entity_id: input_select.tech_day_mode_hk
+              state: "Day"
+          sequence:
+            - service: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.room_motion_day
+            - service: input_boolean.turn_off
+              target:
+                entity_id:
+                  - input_boolean.room_motion_evening
+                  - input_boolean.room_motion_night
+
+        - conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: group.room_motion_sensors
+                  state: "on"
+                - condition: state
+                  entity_id: timer.room_motion_hold
+                  state: "active"
+            - condition: state
+              entity_id: input_select.tech_day_mode_hk
+              state: "Evening"
+          sequence:
+            - service: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.room_motion_evening
+            - service: input_boolean.turn_off
+              target:
+                entity_id:
+                  - input_boolean.room_motion_day
+                  - input_boolean.room_motion_night
+
+        - conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: group.room_motion_sensors
+                  state: "on"
+                - condition: state
+                  entity_id: timer.room_motion_hold
+                  state: "active"
+            - condition: state
+              entity_id: input_select.tech_day_mode_hk
+              state: "Night"
+          sequence:
+            - service: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.room_motion_night
+            - service: input_boolean.turn_off
+              target:
+                entity_id:
+                  - input_boolean.room_motion_day
+                  - input_boolean.room_motion_evening
+
+      # Timer expired + no motion → cancel timer and turn off all
+      default:
+        - service: timer.cancel
+          target:
+            entity_id: timer.room_motion_hold
+        - service: input_boolean.turn_off
+          target:
+            entity_id:
+              - input_boolean.room_motion_day
+              - input_boolean.room_motion_evening
+              - input_boolean.room_motion_night

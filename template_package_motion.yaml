@@ -1,0 +1,58 @@
+# ---------------------------------
+# !!! DIESE DATEI NICHT AENDERN !!!
+# ---------------------------------
+
+#VERSION="5"
+
+group:
+  room_motion_sensors:
+    name: Room Motion Sensors
+    entities: !include ../codexhome/sensors/room_sensors.yaml
+
+
+input_boolean:
+  room_motion_day:
+    name: Room Motion Day
+
+  room_motion_evening:
+    name: Room Motion Evening
+
+  room_motion_night:
+    name: Room Motion Night
+
+
+timer:
+  room_motion_hold:
+    name: Room Motion Hold
+    duration: "00:01:00"
+
+
+template:
+  - binary_sensor:
+      - name: "Room Motion Day"
+        unique_id: room_motion_day_hk
+        default_entity_id: binary_sensor.room_motion_day_hk
+        device_class: motion
+        state: "{{ is_state('input_boolean.room_motion_day', 'on') }}"
+
+      - name: "Room Motion Evening"
+        unique_id: room_motion_evening_hk
+        default_entity_id: binary_sensor.room_motion_evening_hk
+        device_class: motion
+        state: "{{ is_state('input_boolean.room_motion_evening', 'on') }}"
+
+      - name: "Room Motion Night"
+        unique_id: room_motion_night_hk
+        default_entity_id: binary_sensor.room_motion_night_hk
+        device_class: motion
+        state: "{{ is_state('input_boolean.room_motion_night', 'on') }}"
+
+      - name: "Room Motion"
+        unique_id: room_motion_hk
+        default_entity_id: binary_sensor.room_motion_hk
+        device_class: motion
+        state: >
+          {{
+            is_state('input_boolean.room_motion_day', 'on')
+            or is_state('input_boolean.room_motion_evening', 'on')
+            or is_state('input_boolean.room_motion_night', 'on')
