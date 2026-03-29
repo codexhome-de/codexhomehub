@@ -21,12 +21,12 @@ input_select:
   sunrise_offset_hk:
     name: Sunrise Offset
     options:
-      - "-30 min"
+      - "30min before"
       - "Sunrise"
-      - "30 min"
-      - "1 hour"
-      - "1.5 hours"
-      - "2 hours"
+      - "30min after"
+      - "1h after"
+      - "1.5h after"
+      - "2h after"
     initial: "1 hour"
 EOF
 
@@ -60,12 +60,12 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
             - condition: template
               value_template: >
                 {% set map = {
-                  "-30 min": -0.5,
+                  "30min before": -0.5,
                   "Sunrise": 0,
-                  "30 min": 0.5,
-                  "1 hour": 1,
-                  "1.5 hours": 1.5,
-                  "2 hours": 2
+                  "30min after": 0.5,
+                  "1h after": 1,
+                  "1.5h after": 1.5,
+                  "2h after": 2
                 } %}
                 {% set offset = timedelta(hours=map[states('input_select.sunrise_offset_hk')]) %}
                 {{ now() < (as_datetime(state_attr('sun.sun','next_rising')) + offset) }}
@@ -81,12 +81,12 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
             - condition: template
               value_template: >
                 {% set map = {
-                  "-30 min": -0.5,
-                  "0": 0,
-                  "30 min": 0.5,
-                  "1 hour": 1,
-                  "1.5 hours": 1.5,
-                  "2 hours": 2
+                  "30min before": -0.5,
+                  "Sunrise": 0,
+                  "30min after": 0.5,
+                  "1h after": 1,
+                  "1.5h after": 1.5,
+                  "2h after": 2
                 } %}
                 {% set offset = timedelta(hours=map[states('input_select.sunrise_offset_hk')]) %}
                 {{ now() >= (as_datetime(state_attr('sun.sun','next_rising')) + offset)
@@ -133,4 +133,35 @@ EOF
 echo "Created: $PACKAGES_DIR/tech_day_mode.yaml"
 echo "Created: $AUTOMATIONS_DIR/tech_day_mode.yaml"
 echo "Created: $PACKAGES_DIR/tech_reminder.yaml"
+
+# ─── Update configuration.yaml ────────────────────────────────────────────────
+CONFIG="$BASE_DIR/homeassistant/configuration.yaml"
+
+if [ -f "$CONFIG" ]; then
+  echo "Updating $CONFIG..."
+
+  # Replace automation line with dir merge list
+  sed -i 's|^automation:.*|automation: !include_dir_merge_list automations/|' "$CONFIG"
+
+  # Append blocks if not already present
+  if ! grep -q "packages:" "$CONFIG"; then
+    cat >> "$CONFIG" << 'EOF'
+
+homeassistant:
+  packages: !include_dir_named packages
+
+homekit:
+  - name: Codex Home
+    filter:
+      include_entity_globs:
+        - "*_hk"
+EOF
+    echo "Appended homeassistant packages and homekit config."
+  else
+    echo "Packages block already present, skipping append."
+  fi
+else
+  echo "Warning: $CONFIG not found, skipping configuration.yaml update."
+fi
+
 echo "Done."
