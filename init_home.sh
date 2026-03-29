@@ -5,6 +5,10 @@ AUTOMATIONS_DIR="/homeassistant/automations"
 
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR"
 
+# ─── Day Mode config ──────────────────────────────────────────────────────────
+SUNRISE_OFFSET="+01:00:00"
+NIGHT_TIME="23:00:00"
+
 cat > "$PACKAGES_DIR/tech_day_mode.yaml" << 'EOF'
 input_select:
   tech_day_mode_hk:
@@ -15,41 +19,25 @@ input_select:
       - Evening
       - Night
     initial: Evening
-
-  sunrise_offset_hk:
-    name: Sunrise Offset
-    options:
-      - "30min before"
-      - "Sunrise"
-      - "30min after"
-      - "1h after"
-      - "1.5h after"
-      - "2h after"
-    initial: "Sunrise"
 EOF
 
 cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
 - id: set_day_mode
   alias: Set Day Mode
-
   trigger:
     - id: day
       platform: sun
       event: sunrise
-      offset: "+01:00:00"
-
+      offset: "SUNRISE_OFFSET_PLACEHOLDER"
     - id: evening
       platform: sun
       event: sunset
-
     - id: night
       platform: time
-      at: "22:22:00"
-
+      at: "NIGHT_TIME_PLACEHOLDER"
     - id: startup
       platform: homeassistant
       event: start
-
   action:
     - choose:
         - conditions:
@@ -61,7 +49,6 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "Day"
-
         - conditions:
             - condition: trigger
               id: evening
@@ -71,7 +58,6 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "Evening"
-
         - conditions:
             - condition: trigger
               id: night
@@ -81,14 +67,13 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "Night"
-
         # Startup: Day
         - conditions:
             - condition: trigger
               id: startup
             - condition: sun
               after: sunrise
-              after_offset: "+01:00:00"
+              after_offset: "SUNRISE_OFFSET_PLACEHOLDER"
               before: sunset
           sequence:
             - action: input_select.select_option
@@ -96,35 +81,32 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "Day"
-
-        # Startup: Night (after 0:00)
+        # Startup: Night (late)
         - conditions:
             - condition: trigger
               id: startup
             - condition: template
               value_template: >
-                {{ now() >= today_at("22:22:00") }}
+                {{ now() >= today_at("NIGHT_TIME_PLACEHOLDER") }}
           sequence:
             - action: input_select.select_option
               target:
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "Night"
-
-        # Startup: Night (before 24:00)
+        # Startup: Night (early)
         - conditions:
             - condition: trigger
               id: startup
             - condition: sun
               before: sunrise
-              before_offset: "+01:00:00"
+              before_offset: "SUNRISE_OFFSET_PLACEHOLDER"
           sequence:
             - action: input_select.select_option
               target:
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "Night"
-
         # Startup fallback: Evening
         - conditions:
             - condition: trigger
@@ -136,6 +118,9 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
               data:
                 option: "Evening"
 EOF
+
+sed -i "s/SUNRISE_OFFSET_PLACEHOLDER/$SUNRISE_OFFSET/g" "$AUTOMATIONS_DIR/tech_day_mode.yaml"
+sed -i "s/NIGHT_TIME_PLACEHOLDER/$NIGHT_TIME/g" "$AUTOMATIONS_DIR/tech_day_mode.yaml"
 
 cat > "$PACKAGES_DIR/tech_reminder.yaml" << 'EOF'
 input_boolean:
@@ -155,39 +140,35 @@ template:
         state: "{{ is_state('input_boolean.reminder_trigger_hk', 'on') }}"
 EOF
 
-echo "Created: $PACKAGES_DIR/tech_day_mode.yaml"
-echo "Created: $AUTOMATIONS_DIR/tech_day_mode.yaml"
-echo "Created: $PACKAGES_DIR/tech_reminder.yaml"
-
 # ─── Update configuration.yaml ────────────────────────────────────────────────
-CONFIG="/homeassistant/configuration.yaml"
-
-if [ -f "$CONFIG" ]; then
-  echo "Updating $CONFIG..."
-
-  # Replace automation line with dir merge list
+CONFIG="/homeassistant/configuration.yaml"                                             
+                                                                                       
+if [ -f "$CONFIG" ]; then                                                              
+  echo "Updating $CONFIG..."                                                           
+                                                                                                                                                                                      
+  # Replace automation line with dir merge list                                        
   sed -i 's|^automation:.*|automation: !include_dir_merge_list automations/|' "$CONFIG"
-
-  # Append blocks if not already present
-  if ! grep -q "packages:" "$CONFIG"; then
-    cat >> "$CONFIG" << 'EOF'
-
-homeassistant:
-  packages: !include_dir_named packages
-
-homekit:
-  - name: Codex Home
-    filter:
-      include_entity_globs:
-        - "*_hk"
-EOF
-    echo "Appended homeassistant packages and homekit config."
-  else
-    echo "Packages block already present, skipping append."
-  fi
-else
+                                                                        
+  # Append blocks if not already present                                
+  if ! grep -q "packages:" "$CONFIG"; then                              
+    cat >> "$CONFIG" << 'EOF'                                           
+                                                                                       
+homeassistant:                                                          
+  packages: !include_dir_named packages                                 
+                                                                        
+homekit:                                                                
+  - name: Codex Home                                                    
+    filter:                                                   
+      include_entity_globs:                                             
+        - "*_hk"                                                        
+EOF                                                                     
+    echo "Appended homeassistant packages and homekit config."          
+  else                                                                  
+    echo "Packages block already present, skipping append."             
+  fi                                                                    
+else                                                                    
   echo "Warning: $CONFIG not found, skipping configuration.yaml update."
-fi
-
-echo "Restarting HA..."
-ha core restart
+fi                               
+                                                           
+echo "Restarting HA..."                
+ha core restart                  
