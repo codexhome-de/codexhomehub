@@ -25,7 +25,7 @@ input_select:
       - "1h after"
       - "1.5h after"
       - "2h after"
-    initial: "1 hour"
+    initial: "Sunrise"
 EOF
 
 cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
