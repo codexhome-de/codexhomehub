@@ -1,9 +1,7 @@
 #!/bin/bash
 
-BASE_DIR="${1:-$(dirname "$0")/..}"
-
-PACKAGES_DIR="$BASE_DIR/packages"
-AUTOMATIONS_DIR="$BASE_DIR/automations"
+PACKAGES_DIR="/homeassistant/packages"
+AUTOMATIONS_DIR="/homeassistant/automations"
 
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR"
 
@@ -135,7 +133,7 @@ echo "Created: $AUTOMATIONS_DIR/tech_day_mode.yaml"
 echo "Created: $PACKAGES_DIR/tech_reminder.yaml"
 
 # ─── Update configuration.yaml ────────────────────────────────────────────────
-CONFIG="$BASE_DIR/homeassistant/configuration.yaml"
+CONFIG="/homeassistant/configuration.yaml"
 
 if [ -f "$CONFIG" ]; then
   echo "Updating $CONFIG..."
