@@ -189,4 +189,5 @@ else
   echo "Warning: $CONFIG not found, skipping configuration.yaml update."
 fi
 
-echo "Done."
+echo "Restarting HA..."
+ha core restart
