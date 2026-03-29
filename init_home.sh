@@ -31,18 +31,76 @@ EOF
 cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
 - id: set_day_mode
   alias: Set Day Mode
+
   trigger:
-    - platform: homeassistant
+    - id: day
+      platform: sun
+      event: sunrise
+      offset: "+01:00:00"
+
+    - id: evening
+      platform: sun
+      event: sunset
+
+    - id: night
+      platform: time
+      at: "22:22:00"
+
+    - id: startup
+      platform: homeassistant
       event: start
-    - platform: state
-      entity_id: input_select.sunrise_offset_hk
-    - platform: time_pattern
-      minutes: "/5"   # re-evaluate every 5 min (lightweight + reliable)
 
   action:
     - choose:
-        # Night (after 22:22)
         - conditions:
+            - condition: trigger
+              id: day
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.tech_day_mode_hk
+              data:
+                option: "Day"
+
+        - conditions:
+            - condition: trigger
+              id: evening
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.tech_day_mode_hk
+              data:
+                option: "Evening"
+
+        - conditions:
+            - condition: trigger
+              id: night
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.tech_day_mode_hk
+              data:
+                option: "Night"
+
+        # Startup: Day
+        - conditions:
+            - condition: trigger
+              id: startup
+            - condition: sun
+              after: sunrise
+              after_offset: "+01:00:00"
+              before: sunset
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.tech_day_mode_hk
+              data:
+                option: "Day"
+
+        # Startup: Night (after 0:00)
+        - conditions:
+            - condition: trigger
+              id: startup
             - condition: template
               value_template: >
                 {{ now() >= today_at("22:22:00") }}
@@ -53,20 +111,13 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
               data:
                 option: "Night"
 
-        # Night (before sunrise + offset)
+        # Startup: Night (before 24:00)
         - conditions:
-            - condition: template
-              value_template: >
-                {% set map = {
-                  "30min before": -0.5,
-                  "Sunrise": 0,
-                  "30min after": 0.5,
-                  "1h after": 1,
-                  "1.5h after": 1.5,
-                  "2h after": 2
-                } %}
-                {% set offset = timedelta(hours=map[states('input_select.sunrise_offset_hk')]) %}
-                {{ now() < (as_datetime(state_attr('sun.sun','next_rising')) + offset) }}
+            - condition: trigger
+              id: startup
+            - condition: sun
+              before: sunrise
+              before_offset: "+01:00:00"
           sequence:
             - action: input_select.select_option
               target:
@@ -74,34 +125,10 @@ cat > "$AUTOMATIONS_DIR/tech_day_mode.yaml" << 'EOF'
               data:
                 option: "Night"
 
-        # Day (sunrise + offset → sunset)
+        # Startup fallback: Evening
         - conditions:
-            - condition: template
-              value_template: >
-                {% set map = {
-                  "30min before": -0.5,
-                  "Sunrise": 0,
-                  "30min after": 0.5,
-                  "1h after": 1,
-                  "1.5h after": 1.5,
-                  "2h after": 2
-                } %}
-                {% set offset = timedelta(hours=map[states('input_select.sunrise_offset_hk')]) %}
-                {{ now() >= (as_datetime(state_attr('sun.sun','next_rising')) + offset)
-                   and now() < as_datetime(state_attr('sun.sun','next_setting')) }}
-          sequence:
-            - action: input_select.select_option
-              target:
-                entity_id: input_select.tech_day_mode_hk
-              data:
-                option: "Day"
-
-        # Evening (sunset → 22:22)
-        - conditions:
-            - condition: template
-              value_template: >
-                {{ now() >= as_datetime(state_attr('sun.sun','next_setting'))
-                   and now() < today_at("22:22:00") }}
+            - condition: trigger
+              id: startup
           sequence:
             - action: input_select.select_option
               target:
