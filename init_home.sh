@@ -5,7 +5,7 @@ AUTOMATIONS_DIR="/homeassistant/automations"
 
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR"
 
-# ─── Day Mode config ──────────────────────────────────────────────────────────
+# --- Day Mode config
 SUNRISE_OFFSET="+01:00:00"
 NIGHT_TIME="23:00:00"
 
@@ -140,35 +140,38 @@ template:
         state: "{{ is_state('input_boolean.reminder_trigger_hk', 'on') }}"
 EOF
 
-# ─── Update configuration.yaml ────────────────────────────────────────────────
-CONFIG="/homeassistant/configuration.yaml"                                             
-                                                                                       
-if [ -f "$CONFIG" ]; then                                                              
-  echo "Updating $CONFIG..."                                                           
-                                                                                                                                                                                      
-  # Replace automation line with dir merge list                                        
+# --- Update configuration.yaml
+CONFIG="/homeassistant/configuration.yaml"
+
+if [ -f "$CONFIG" ]; then
+  echo "Updating $CONFIG..."
+
+  # Replace automation line with dir merge list
   sed -i 's|^automation:.*|automation: !include_dir_merge_list automations/|' "$CONFIG"
-                                                                        
-  # Append blocks if not already present                                
-  if ! grep -q "packages:" "$CONFIG"; then                              
-    cat >> "$CONFIG" << 'EOF'                                           
-                                                                                       
-homeassistant:                                                          
-  packages: !include_dir_named packages                                 
-                                                                        
-homekit:                                                                
-  - name: Codex Home                                                    
-    filter:                                                   
-      include_entity_globs:                                             
-        - "*_hk"                                                        
-EOF                                                                     
-    echo "Appended homeassistant packages and homekit config."          
-  else                                                                  
-    echo "Packages block already present, skipping append."             
-  fi                                                                    
-else                                                                    
-  echo "Warning: $CONFIG not found, skipping configuration.yaml update."
-fi                               
-                                                           
-echo "Restarting HA..."                
-ha core restart                  
+
+  # Append blocks if not already present
+  if ! grep -q "packages:" "$CONFIG"; then
+    cat >> "$CONFIG" << 'EOF'
+
+homeassistant:
+  packages: !include_dir_named packages
+
+homekit:
+  - name: Codex Home
+    filter:
+      include_entity_globs:
+        - "*_hk"
+EOF
+  fi
+fi
+
+# --- Add alias to .bash_profile
+PROFILE="/data/.bash_profile"
+  if ! grep -q "alias cu" "$PROFILE"; then
+    cat >> "$PROFILE" << 'EOF'
+alias cu='cd /homeassistant/codexhomehub && git pull'
+EOF
+  fi
+
+echo "Restarting HA..."
+ha core restart
