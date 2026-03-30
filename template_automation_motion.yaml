@@ -59,7 +59,7 @@
                   state: "active"
             - condition: state
               entity_id: input_select.tech_day_mode_hk
-              state: "Day"
+              state: "NAME_DAY_PLACEHOLDER"
           sequence:
             - service: input_boolean.turn_on
               target:
@@ -81,7 +81,7 @@
                   state: "active"
             - condition: state
               entity_id: input_select.tech_day_mode_hk
-              state: "Evening"
+              state: "NAME_EVENING_PLACEHOLDER"
           sequence:
             - service: input_boolean.turn_on
               target:
@@ -103,7 +103,7 @@
                   state: "active"
             - condition: state
               entity_id: input_select.tech_day_mode_hk
-              state: "Night"
+              state: "NAME_NIGHT_PLACEHOLDER"
           sequence:
             - service: input_boolean.turn_on
               target:

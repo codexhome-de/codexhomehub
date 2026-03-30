@@ -1,5 +1,5 @@
 #!/bin/bash
-#VERSION="4"
+
 # xattr -d com.apple.quarantine $HOME/Library/Mobile Documents/com~apple~CloudDocs/codexhome/30_Vorlagen/HA/codexhomehub.command
 
 REPO_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/codexhome/30_Vorlagen/HA"
