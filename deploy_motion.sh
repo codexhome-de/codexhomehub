@@ -38,7 +38,7 @@ fi
 readarray -t ROOMS < "$ROOMS_FILE"
 
 to_slug() {
-  echo "$1" | tr '[:upper:]' '[:lower:]' | tr ' ' '_'
+  echo "$1" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr '-' '_'
 }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
