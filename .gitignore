@@ -1,3 +1,11 @@
-archiv/
-.DS_Store
-rooms.cfg
+# Ignore everything
+*
+**/
+
+# Un-ignore explicitly
+!.gitignore
+!codexhomehub.command
+!deploy_motion.sh
+!init_home.sh
+!template_automation_motion.yaml
+!template_package_motion.yaml
