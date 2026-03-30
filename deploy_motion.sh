@@ -92,4 +92,5 @@ EOF
   echo "Deployed: $ROOM_UPPER"
 done
 
-echo "Done."
+echo "Restart HA!"
+ha core restart
