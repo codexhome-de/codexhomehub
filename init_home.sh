@@ -19,12 +19,14 @@ source "$CFG_FILE"
 # --- Validate LANG from config
 if [ "$LANG" != "DE" ] && [ "$LANG" != "EN" ]; then
   echo "Error: LANG=\"$LANG\" is invalid in codexhome.cfg — must be DE or EN"
+  echo "Error: LANG=\"$LANG\" is invalid in codexhome.cfg — must be DE or EN"
   exit 1
 fi
 
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR"
 
 # --- Update configuration.yaml
+CONFIG="$HA_DIR/configuration.yaml"
 CONFIG="$HA_DIR/configuration.yaml"
 
 if [ -f "$CONFIG" ]; then
@@ -47,6 +49,8 @@ homekit:
         - "*_hk"
 EOF
   fi
+else
+  echo "Warning: $CONFIG not found, skipping."
 else
   echo "Warning: $CONFIG not found, skipping."
 fi
