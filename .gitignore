@@ -5,7 +5,6 @@
 # Un-ignore explicitly
 !.gitignore
 !codexhome.cfg
-!codexhomehub.command
 !deploy_motion.sh
 !init_home.sh
 !template_automation_day_mode.yaml
