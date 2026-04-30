@@ -1,0 +1,11 @@
+#VERSION="1"
+
+input_select:
+  tech_day_mode_hk:
+    name: NAME_DAY_MODE_PLACEHOLDER
+    icon: mdi:theme-light-dark
+    options:
+      - NAME_DAY_PLACEHOLDER
+      - NAME_EVENING_PLACEHOLDER
+      - NAME_NIGHT_PLACEHOLDER
+    initial: NAME_EVENING_PLACEHOLDER

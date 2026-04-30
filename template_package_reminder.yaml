@@ -1,0 +1,16 @@
+#VERSION="1"
+
+input_boolean:
+  reminder_trigger_hk:
+    name: NAME_REMINDER_ALARM_PLACEHOLDER
+
+  reminder_hk:
+    name: NAME_REMINDER_PLACEHOLDER
+
+template:
+  - binary_sensor:
+      - name: "NAME_REMINDER_SENSOR_PLACEHOLDER"
+        unique_id: reminder
+        default_entity_id: binary_sensor.reminder_hk
+        device_class: smoke
+        state: "{{ is_state('input_boolean.reminder_trigger_hk', 'on') }}"
