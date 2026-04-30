@@ -18,7 +18,7 @@ if [ "$LANG" = "DE" ]; then
   NAME_DAY="Tag"
   NAME_EVENING="Abend"
   NAME_NIGHT="Nacht"
-  NAME_REMINDER_ALARM="Erinnerung Alarm"
+  NAME_REMINDER_ALARM="Alarm Erinnerung"
   NAME_REMINDER="Erinnerung"
   NAME_REMINDER_SENSOR="Erinnerung"
 else
