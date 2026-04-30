@@ -1,5 +1,3 @@
-#VERSION="6"
-
 group:
   room_motion_sensors:
     name: "NAME_MOTION_PLACEHOLDER Sensors"

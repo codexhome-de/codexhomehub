@@ -1,5 +1,3 @@
-#VERSION="1"
-
 input_boolean:
   reminder_trigger_hk:
     name: NAME_REMINDER_ALARM_PLACEHOLDER

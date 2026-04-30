@@ -1,5 +1,3 @@
-#VERSION="5"
-
 - alias: Room Motion
   id: room_motion
   mode: restart

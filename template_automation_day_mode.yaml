@@ -1,18 +1,15 @@
-#VERSION="1"
-
 - id: set_day_mode
   alias: Set Day Mode
   trigger:
     - id: day
-      platform: sun
-      event: sunrise
-      offset: "SUNRISE_OFFSET_PLACEHOLDER"
+      platform: time
+      at: "TIME_DAY_PLACEHOLDER"
     - id: evening
       platform: sun
       event: sunset
     - id: night
       platform: time
-      at: "NIGHT_TIME_PLACEHOLDER"
+      at: "TIME_NIGHT_PLACEHOLDER"
     - id: startup
       platform: homeassistant
       event: start
@@ -45,13 +42,37 @@
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "NAME_NIGHT_PLACEHOLDER"
-        # Startup: Day
+        # Startup: Night (late — after NIGHT_TIME)
         - conditions:
             - condition: trigger
               id: startup
+            - condition: time
+              after: "TIME_NIGHT_PLACEHOLDER"
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.tech_day_mode_hk
+              data:
+                option: "NAME_NIGHT_PLACEHOLDER"
+        # Startup: Night (early — before DAY_TIME)
+        - conditions:
+            - condition: trigger
+              id: startup
+            - condition: time
+              before: "TIME_DAY_PLACEHOLDER"
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.tech_day_mode_hk
+              data:
+                option: "NAME_NIGHT_PLACEHOLDER"
+        # Startup: Day (between DAY_TIME and sunset)
+        - conditions:
+            - condition: trigger
+              id: startup
+            - condition: time
+              after: "TIME_DAY_PLACEHOLDER"
             - condition: sun
-              after: sunrise
-              after_offset: "SUNRISE_OFFSET_PLACEHOLDER"
               before: sunset
           sequence:
             - action: input_select.select_option
@@ -59,33 +80,7 @@
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "NAME_DAY_PLACEHOLDER"
-        # Startup: Night (late)
-        - conditions:
-            - condition: trigger
-              id: startup
-            - condition: template
-              value_template: >
-                {{ now() >= today_at("NIGHT_TIME_PLACEHOLDER") }}
-          sequence:
-            - action: input_select.select_option
-              target:
-                entity_id: input_select.tech_day_mode_hk
-              data:
-                option: "NAME_NIGHT_PLACEHOLDER"
-        # Startup: Night (early)
-        - conditions:
-            - condition: trigger
-              id: startup
-            - condition: sun
-              before: sunrise
-              before_offset: "SUNRISE_OFFSET_PLACEHOLDER"
-          sequence:
-            - action: input_select.select_option
-              target:
-                entity_id: input_select.tech_day_mode_hk
-              data:
-                option: "NAME_NIGHT_PLACEHOLDER"
-        # Startup fallback: Evening
+        # Startup fallback: Evening (after sunset, before NIGHT_TIME)
         - conditions:
             - condition: trigger
               id: startup
