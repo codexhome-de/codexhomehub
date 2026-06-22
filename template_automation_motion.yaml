@@ -1,5 +1,4 @@
-#VERSION="5"
-
+#DEPLOY_PLACEHOLDER
 - alias: Room Motion
   id: room_motion
   mode: restart

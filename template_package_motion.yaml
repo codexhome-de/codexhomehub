@@ -1,5 +1,4 @@
-#VERSION="6"
-
+#DEPLOY_PLACEHOLDER
 group:
   room_motion_sensors:
     name: "NAME_MOTION_PLACEHOLDER Sensors"

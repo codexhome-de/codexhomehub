@@ -1,5 +1,4 @@
-#VERSION="1"
-
+#DEPLOY_PLACEHOLDER
 - id: set_day_mode
   alias: Set Day Mode
   trigger:
@@ -10,6 +9,7 @@
     - id: evening
       platform: sun
       event: sunset
+      offset: "SUNSET_OFFSET_PLACEHOLDER"
     - id: night
       platform: time
       at: "NIGHT_TIME_PLACEHOLDER"
@@ -27,6 +27,9 @@
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "NAME_DAY_PLACEHOLDER"
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.party_mode_hk
         - conditions:
             - condition: trigger
               id: evening
@@ -53,32 +56,27 @@
               after: sunrise
               after_offset: "SUNRISE_OFFSET_PLACEHOLDER"
               before: sunset
+              before_offset: "SUNSET_OFFSET_PLACEHOLDER"
           sequence:
             - action: input_select.select_option
               target:
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "NAME_DAY_PLACEHOLDER"
-        # Startup: Night (late)
-        - conditions:
-            - condition: trigger
-              id: startup
-            - condition: template
-              value_template: >
-                {{ now() >= today_at("NIGHT_TIME_PLACEHOLDER") }}
-          sequence:
-            - action: input_select.select_option
+            - action: input_boolean.turn_off
               target:
-                entity_id: input_select.tech_day_mode_hk
-              data:
-                option: "NAME_NIGHT_PLACEHOLDER"
-        # Startup: Night (early)
+                entity_id: input_boolean.party_mode_hk
+        # Startup: Night
         - conditions:
             - condition: trigger
               id: startup
-            - condition: sun
-              before: sunrise
-              before_offset: "SUNRISE_OFFSET_PLACEHOLDER"
+            - condition: or
+              conditions:
+                - condition: time
+                  after: "NIGHT_TIME_PLACEHOLDER"
+                - condition: sun
+                  before: sunrise
+                  before_offset: "SUNRISE_OFFSET_PLACEHOLDER"
           sequence:
             - action: input_select.select_option
               target:
