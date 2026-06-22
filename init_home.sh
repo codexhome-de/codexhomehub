@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#VERSION="1"
-
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 HA_DIR="$(dirname "$SCRIPT_DIR")"
 
