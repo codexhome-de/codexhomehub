@@ -2,7 +2,7 @@
 group:
   room_motion_sensors:
     name: "NAME_MOTION_PLACEHOLDER Sensors"
-    entities: !include /config/codexhomehub/sensors/room_sensors.yaml
+    entities: !include /homeassistant/codexhomehub/sensors/ROOM_LOWER_PLACEHOLDER_sensors.yaml
 
 
 input_boolean:
@@ -25,30 +25,30 @@ timer:
 template:
   - binary_sensor:
       - name: "NAME_MOTION_DAY_PLACEHOLDER"
-        unique_id: room_motion_day_hk
-        default_entity_id: binary_sensor.room_motion_day_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_motion_day_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_day_hk
         device_class: motion
-        state: "{{ is_state('input_boolean.room_motion_day', 'on') }}"
+        state: "{{ is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_day', 'on') }}"
 
       - name: "NAME_MOTION_EVENING_PLACEHOLDER"
-        unique_id: room_motion_evening_hk
-        default_entity_id: binary_sensor.room_motion_evening_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_motion_evening_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_evening_hk
         device_class: motion
-        state: "{{ is_state('input_boolean.room_motion_evening', 'on') }}"
+        state: "{{ is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_evening', 'on') }}"
 
       - name: "NAME_MOTION_NIGHT_PLACEHOLDER"
-        unique_id: room_motion_night_hk
-        default_entity_id: binary_sensor.room_motion_night_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_motion_night_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_night_hk
         device_class: motion
-        state: "{{ is_state('input_boolean.room_motion_night', 'on') }}"
+        state: "{{ is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_night', 'on') }}"
 
       - name: "NAME_MOTION_PLACEHOLDER"
-        unique_id: room_motion_hk
-        default_entity_id: binary_sensor.room_motion_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_motion_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_hk
         device_class: motion
         state: >
           {{
-            is_state('input_boolean.room_motion_day', 'on')
-            or is_state('input_boolean.room_motion_evening', 'on')
-            or is_state('input_boolean.room_motion_night', 'on')
+            is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_day', 'on')
+            or is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_evening', 'on')
+            or is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_night', 'on')
           }}

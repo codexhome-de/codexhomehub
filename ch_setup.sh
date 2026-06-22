@@ -28,12 +28,12 @@ else
   source "$CFG_FILE"
 fi
 
-# --- Validate LANG from config
-if [ "$LANG" != "DE" ] && [ "$LANG" != "EN" ]; then
-  echo "Error: LANG=\"$LANG\" is invalid in $CH_CONFIG — must be DE or EN"
+# --- Validate LANGUAGE from config
+if [ "$LANGUAGE" != "DE" ] && [ "$LANGUAGE" != "EN" ]; then
+  echo "Error: LANGUAGE=\"$LANGUAGE\" is invalid in $CH_CONFIG — must be DE or EN"
   exit 1
 else
-  source "ch_lang_$LANG.cfg"
+  source "ch_lang_$LANGUAGE.cfg"
 fi
 
 ch_init() {
@@ -116,9 +116,15 @@ ch_system() {
 ch_motion() {
   echo -e "----------\nStart: motion\n----------"
 
-  ROOMS_FILE="$SCRIPT_DIR/rooms.cfg"
+  ROOMS_FILE="$SCRIPT_DIR/ch_rooms.cfg"
+  ROOMS_EXAMPLE="$SCRIPT_DIR/ch_rooms.exmple"
   if [ ! -f "$ROOMS_FILE" ]; then
-    echo "Error: rooms.cfg not found at $ROOMS_FILE"
+    if [ -f "$ROOMS_EXAMPLE" ]; then
+      cp "$ROOMS_EXAMPLE" "$ROOMS_FILE"
+      echo "Created rooms.cfg from example — edit it with your rooms, then re-run."
+    else
+      echo "Error: $ROOMS_FILE not found and no $ROOMS_EXAMPLE to seed from."
+    fi
     exit 1
   fi
   readarray -t ROOMS < "$ROOMS_FILE"
@@ -130,23 +136,23 @@ ch_motion() {
     ROOM_LOWER=$(echo "$room" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr '-' '_')
 
     # Package
-    cp "$SCRIPT_DIR/template_package_motion.yaml" "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i 's/#VERSION="\([^"]*\)"/#VERSION="\1" - deployed '"${DEPLOY_DATE}"'/g' "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/Room/${ROOM_UPPER}/g"                                                          "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/room/${ROOM_LOWER}/g"                                                          "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_DAY_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_DAY}/g"               "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_EVENING_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_EVENING}/g"       "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_NIGHT_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_NIGHT}/g"           "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION}/g"                       "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    cp "$SCRIPT_DIR/template_package_motion.yaml"                                     "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                            "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"                                 "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"                                 "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_DAY_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_DAY}/g"         "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_EVENING_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_EVENING}/g" "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_NIGHT_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_NIGHT}/g"     "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION}/g"                 "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
 
     # Automation
-    cp "$SCRIPT_DIR/template_automation_motion.yaml" "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i 's/#VERSION="\([^"]*\)"/#VERSION="\1" - deployed '"${DEPLOY_DATE}"'/g' "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/Room/${ROOM_UPPER}/g"                                                          "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/room/${ROOM_LOWER}/g"                                                          "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_DAY_PLACEHOLDER/${NAME_DAY}/g"                                            "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_EVENING_PLACEHOLDER/${NAME_EVENING}/g"                                    "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_NIGHT_PLACEHOLDER/${NAME_NIGHT}/g"                                        "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    cp "$SCRIPT_DIR/template_automation_motion.yaml"        "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"       "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"       "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_DAY_PLACEHOLDER/${NAME_DAY}/g"           "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_EVENING_PLACEHOLDER/${NAME_EVENING}/g"   "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_NIGHT_PLACEHOLDER/${NAME_NIGHT}/g"       "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
 
     # Sensor stub
     SENSOR_FILE="$SENSORS_DIR/${ROOM_LOWER}_sensors.yaml"
