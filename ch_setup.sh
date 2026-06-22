@@ -1,73 +1,88 @@
 #!/bin/bash
 
-#VERSION="1"
+MODE="${1:-all}"
+if [ "$MODE" != "all" ]
+&& [ "$MODE" != "init" ]
+&& [ "$MODE" != "motion" ]
+&& [ "$MODE" != "system" ]
+then
+  echo "Usage: $0 [(all)|init|motion|system]"
+  exit 1
+fi
+
+DEPLOY_DATE=$(date +%Y%m%d)
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 HA_DIR="$(dirname "$SCRIPT_DIR")"
-
 PACKAGES_DIR="$HA_DIR/packages"
 AUTOMATIONS_DIR="$HA_DIR/automations"
 SENSORS_DIR="$SCRIPT_DIR/sensors"
 
 # --- Load config
-CFG_FILE="$SCRIPT_DIR/codexhome.cfg"
+CH_CONFIG="ch_config.cfg"
+CFG_FILE="$SCRIPT_DIR/$CH_CONFIG"
 if [ ! -f "$CFG_FILE" ]; then
-  echo "Error: codexhome.cfg not found at $CFG_FILE"
+  echo "Error: $CH_CONFIG not found at $CFG_FILE"
   exit 1
-fi
-source "$CFG_FILE"
-
-# --- Mode parameter (optional, default: all)
-MODE="${1:-all}"
-if [ "$MODE" != "all" ] && [ "$MODE" != "motion" ] && [ "$MODE" != "system" ]; then
-  echo "Usage: $0 [all|motion|system]"
-  exit 1
+else
+  source "$CFG_FILE"
 fi
 
 # --- Validate LANG from config
-if [ -z "$LANG" ]; then
-  echo "Error: LANG is not set in codexhome.cfg — set it to DE or EN"
-  exit 1
-fi
 if [ "$LANG" != "DE" ] && [ "$LANG" != "EN" ]; then
-  echo "Error: LANG=\"$LANG\" is invalid in codexhome.cfg — must be DE or EN"
+  echo "Error: LANG=\"$LANG\" is invalid in $CH_CONFIG — must be DE or EN"
   exit 1
-fi
-
-# --- Localized entity names
-if [ "$LANG" = "DE" ]; then
-  NAME_DAY_MODE="Tagesmodus"
-  NAME_DAY="Tag"
-  NAME_EVENING="Abend"
-  NAME_NIGHT="Nacht"
-  NAME_MOTION_DAY="Bewegung Tag"
-  NAME_MOTION_EVENING="Bewegung Abend"
-  NAME_MOTION_NIGHT="Bewegung Nacht"
-  NAME_MOTION="Bewegung"
-  NAME_REMINDER_ALARM="Alarm Erinnerung"
-  NAME_REMINDER="Erinnerung"
-  NAME_REMINDER_SENSOR="Erinnerung"
 else
-  NAME_DAY_MODE="Day Mode"
-  NAME_DAY="Day"
-  NAME_EVENING="Evening"
-  NAME_NIGHT="Night"
-  NAME_MOTION_DAY="Motion Day"
-  NAME_MOTION_EVENING="Motion Evening"
-  NAME_MOTION_NIGHT="Motion Night"
-  NAME_MOTION="Motion"
-  NAME_REMINDER_ALARM="Reminder Alarm"
-  NAME_REMINDER="Reminder"
-  NAME_REMINDER_SENSOR="Reminder"
+  source "ch_lang_$LANG.cfg"
 fi
 
-DEPLOY_DATE=$(date +%Y%m%d)
+ch_init() {
+  echo -e "----------\nStart: init\n----------"
 
-mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR" "$SENSORS_DIR"
+  mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR"
 
-# ---------------------------------------------------------------------------
-deploy_system() {
-  echo "Deploying system (day mode + reminder)..."
+  # --- Update configuration.yaml
+  HA_CONFIG="$HA_DIR/configuration.yaml"
+
+  if [ -f "$HA_CONFIG" ]; then
+    echo "Updating $HA_CONFIG..."
+
+    # Replace automation line with dir merge list
+    sed -i 's|^automation:.*|automation: !include_dir_merge_list automations/|' "$HA_CONFIG"
+
+    # Append blocks if not already present
+    if ! grep -q "packages:" "$HA_CONFIG"; then
+      cat >> "$HA_CONFIG" << 'EOF'
+
+homeassistant:
+  packages: !include_dir_named packages
+
+homekit:
+  - name: Codex Home
+    filter:
+      include_entity_globs:
+        - "*_hk"
+EOF
+    fi
+  else
+    echo "Error: HomeAssistant configuration file not found at: $HA_CONFIG"
+    exit 1
+  fi
+
+  # --- Add alias to .bash_profile
+  PROFILE="/data/.bash_profile"
+  touch "$PROFILE"
+  if ! grep -q "alias ch_update" "$PROFILE"; then
+    cat >> "$PROFILE" << 'EOF'
+alias ch_update='cd /homeassistant/codexhomehub && git pull'
+EOF
+  fi
+
+  echo -e "----------\nDone: init\n----------"
+}
+
+ch_system() {
+  echo -e "----------\nStart: system\n----------"
 
   # Day mode package
   cp "$SCRIPT_DIR/template_package_day_mode.yaml"         "$PACKAGES_DIR/tech_day_mode.yaml"
@@ -76,6 +91,7 @@ deploy_system() {
   sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$PACKAGES_DIR/tech_day_mode.yaml"
   sed -i "s/NAME_EVENING_PLACEHOLDER/$NAME_EVENING/g"     "$PACKAGES_DIR/tech_day_mode.yaml"
   sed -i "s/NAME_NIGHT_PLACEHOLDER/$NAME_NIGHT/g"         "$PACKAGES_DIR/tech_day_mode.yaml"
+  sed -i "s/NAME_PARTY_PLACEHOLDER/$NAME_PARTY/g"         "$PACKAGES_DIR/tech_day_mode.yaml"
 
   # Day mode automation
   cp "$SCRIPT_DIR/template_automation_day_mode.yaml"      "$AUTOMATIONS_DIR/tech_day_mode.yaml"
@@ -94,11 +110,12 @@ deploy_system() {
   sed -i "s/NAME_REMINDER_PLACEHOLDER/$NAME_REMINDER/g"               "$PACKAGES_DIR/tech_reminder.yaml"
   sed -i "s/NAME_REMINDER_SENSOR_PLACEHOLDER/$NAME_REMINDER_SENSOR/g" "$PACKAGES_DIR/tech_reminder.yaml"
 
-  echo "Done: system"
+  echo -e "----------\nDone: system\n----------"
 }
 
-# ---------------------------------------------------------------------------
-deploy_motion() {
+ch_motion() {
+  echo -e "----------\nStart: motion\n----------"
+
   ROOMS_FILE="$SCRIPT_DIR/rooms.cfg"
   if [ ! -f "$ROOMS_FILE" ]; then
     echo "Error: rooms.cfg not found at $ROOMS_FILE"
@@ -147,23 +164,25 @@ EOF
 
     echo "Deployed: $ROOM_UPPER"
   done
-
-  echo "Done: motion"
+  echo -e "----------\nDone: motion\n----------"
 }
 
-# ---------------------------------------------------------------------------
 case "$MODE" in
   all)
-    deploy_system
-    deploy_motion
+    ch_init
+    ch_system
+    ch_motion
+    ;;
+  init)
+    ch_init
     ;;
   system)
-    deploy_system
+    ch_system
     ;;
   motion)
-    deploy_motion
+    ch_motion
     ;;
 esac
 
-echo "Restarting HA..."
+echo -e "----------\nRestart: HomeAssistant!\n----------"
 ha core restart

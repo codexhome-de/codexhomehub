@@ -2,7 +2,6 @@
 input_select:
   tech_day_mode_hk:
     name: NAME_DAY_MODE_PLACEHOLDER
-    icon: mdi:theme-light-dark
     options:
       - NAME_DAY_PLACEHOLDER
       - NAME_EVENING_PLACEHOLDER
@@ -11,4 +10,4 @@ input_select:
 
 input_boolean:
   party_mode_hk:
-    name: Party
+    name: NAME_PARTY_PLACEHOLDER
