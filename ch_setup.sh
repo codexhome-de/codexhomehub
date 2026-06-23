@@ -117,7 +117,7 @@ ch_motion() {
   echo -e "----------\nStart: motion\n----------"
 
   ROOMS_FILE="$SCRIPT_DIR/ch_rooms.cfg"
-  ROOMS_EXAMPLE="$SCRIPT_DIR/ch_rooms.example"
+  ROOMS_EXAMPLE="$SCRIPT_DIR/template_rooms.cfg"
   if [ ! -f "$ROOMS_FILE" ]; then
     if [ -f "$ROOMS_EXAMPLE" ]; then
       cp "$ROOMS_EXAMPLE" "$ROOMS_FILE"

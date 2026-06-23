@@ -7,10 +7,10 @@
 !ch_config.cfg
 !ch_lang_DE.cfg
 !ch_lang_EN.cfg
-!ch_rooms.example
 !ch_setup.sh
 !template_automation_day_mode.yaml
 !template_automation_motion.yaml
 !template_package_day_mode.yaml
 !template_package_motion.yaml
 !template_package_reminder.yaml
+!template_rooms.cfg
