@@ -1,12 +1,12 @@
 #!/bin/bash
 
-MODE="${1:-all}"
+MODE="${1}"
 if [ "$MODE" != "all" ]
 && [ "$MODE" != "init" ]
 && [ "$MODE" != "motion" ]
 && [ "$MODE" != "system" ]
 then
-  echo "Usage: $0 [(all)|init|motion|system]"
+  echo "Usage: $0 [all|init|motion|system]"
   exit 1
 fi
 
@@ -117,11 +117,11 @@ ch_motion() {
   echo -e "----------\nStart: motion\n----------"
 
   ROOMS_FILE="$SCRIPT_DIR/ch_rooms.cfg"
-  ROOMS_EXAMPLE="$SCRIPT_DIR/ch_rooms.exmple"
+  ROOMS_EXAMPLE="$SCRIPT_DIR/ch_rooms.example"
   if [ ! -f "$ROOMS_FILE" ]; then
     if [ -f "$ROOMS_EXAMPLE" ]; then
       cp "$ROOMS_EXAMPLE" "$ROOMS_FILE"
-      echo "Created rooms.cfg from example — edit it with your rooms, then re-run."
+      echo "Created $ROOMS_FILE from example — edit it with your rooms, then re-run."
     else
       echo "Error: $ROOMS_FILE not found and no $ROOMS_EXAMPLE to seed from."
     fi
@@ -133,6 +133,10 @@ ch_motion() {
 
   for room in "${ROOMS[@]}"; do
     ROOM_UPPER="$room"
+    ROOM_LOWER=$(echo "$room" \
+      | tr '[:upper:]' '[:lower:]' \
+      | tr ' ' '_' | tr '-' '_' \
+      | sed -e 's/Ä/ae/g; s/Ö/oe/g; s/Ü/ue/g; s/ä/ae/g; s/ö/oe/g; s/ü/ue/g; s/ß/ss/g')
     ROOM_LOWER=$(echo "$room" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr '-' '_')
 
     # Package
@@ -167,8 +171,6 @@ EOF
     else
       echo "Skipped sensor stub (exists): $SENSOR_FILE"
     fi
-
-    echo "Deployed: $ROOM_UPPER"
   done
   echo -e "----------\nDone: motion\n----------"
 }
