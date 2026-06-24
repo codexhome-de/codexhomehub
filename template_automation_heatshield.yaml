@@ -1,0 +1,80 @@
+#DEPLOY_PLACEHOLDER
+- id: set_heatshield_mode
+  alias: Set Heatshield Mode
+  trigger:
+    - id: east
+      platform: time
+      at: "HEATSHIELD_EAST_TIME_PLACEHOLDER"
+    - id: south
+      platform: time
+      at: "HEATSHIELD_SOUTH_TIME_PLACEHOLDER"
+    - id: west
+      platform: time
+      at: "HEATSHIELD_WEST_TIME_PLACEHOLDER"
+  condition:
+    - condition: not
+      conditions:
+        - condition: state
+          entity_id: input_select.heatshield_mode_hk
+          state: "NAME_HEATSHIELD_OFF_PLACEHOLDER"
+    - condition: template
+      value_template: >
+        {% set outside_state = states('OUTSIDE_TEMP_SENSOR_PLACEHOLDER') %}
+        {% if outside_state in ['unknown', 'unavailable', 'none', 'None'] %}
+          {% set outside_temp = state_attr('OUTSIDE_TEMP_SENSOR_PLACEHOLDER', 'temperature') | float(default=none) %}
+        {% else %}
+          {% set outside_temp = outside_state | float(default=none) %}
+        {% endif %}
+        {% set inside_temp = states('INSIDE_TEMP_SENSOR_PLACEHOLDER') | float(default=none) %}
+        {% set temp_diff = HEATSHIELD_TEMP_DIFF_PLACEHOLDER | float %}
+        {{ outside_temp is not none and inside_temp is not none
+           and (outside_temp - inside_temp) >= temp_diff }}
+  action:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: east
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.heatshield_mode_hk
+              data:
+                option: "NAME_HEATSHIELD_EAST_PLACEHOLDER"
+            - delay: "00:00:02"
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.heatshield_mode_hk
+              data:
+                option: "NAME_HEATSHIELD_AUTO_PLACEHOLDER"
+
+        - conditions:
+            - condition: trigger
+              id: south
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.heatshield_mode_hk
+              data:
+                option: "NAME_HEATSHIELD_SOUTH_PLACEHOLDER"
+            - delay: "00:00:02"
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.heatshield_mode_hk
+              data:
+                option: "NAME_HEATSHIELD_AUTO_PLACEHOLDER"
+
+        - conditions:
+            - condition: trigger
+              id: west
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.heatshield_mode_hk
+              data:
+                option: "NAME_HEATSHIELD_WEST_PLACEHOLDER"
+            - delay: "00:00:02"
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.heatshield_mode_hk
+              data:
+                option: "NAME_HEATSHIELD_AUTO_PLACEHOLDER"
