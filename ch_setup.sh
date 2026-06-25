@@ -15,7 +15,7 @@ ch_file() {
 
 MODE="${1}"
 if [ "$MODE" != "all" ] && [ "$MODE" != "init" ] && [ "$MODE" != "motion" ] && [ "$MODE" != "system" ]; then
-  ch_err $LINENO "Usage: $0 [ all | init | day_mode | motion | reminder_alarm | system ]"
+  ch_err $LINENO "Usage: $0 [ all | init | day_mode | heatshield | motion | reminder ]"
 fi
 
 DEPLOY_DATE=$(date +%Y%m%d)
@@ -33,7 +33,7 @@ source "$SCRIPT_DIR/ch_config.cfg"
 if [ "$LANGUAGE" != "DE" ] && [ "$LANGUAGE" != "EN" ]; then
   ch_err $LINENO "Error: LANGUAGE=\"$LANGUAGE\" is invalid in $CH_CONFIG — must be DE or EN"
 fi
-source "template_lang_$LANGUAGE.cfg"
+source "$SCRIPT_DIR/template_lang_$LANGUAGE.cfg"
 
 ch_init() {
   HA_CONFIG="$HA_DIR/configuration.yaml"
@@ -104,7 +104,7 @@ ch_motion() {
       | tr '[:upper:]' '[:lower:]' \
       | tr ' ' '_' | tr '-' '_' \
       | sed -e 's/Ä/ae/g; s/Ö/oe/g; s/Ü/ue/g; s/ä/ae/g; s/ö/oe/g; s/ü/ue/g; s/ß/ss/g')
-    ROOM_LOWER=$(echo "$room" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr '-' '_')
+    ROOM_LOWER=$(echo "$ROOM_LOWER" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr '-' '_')
 
     cp "$SCRIPT_DIR/template_package_motion.yaml"                                     "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
     sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                            "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
@@ -141,7 +141,7 @@ ch_heatshield() {
   sed -i "s/NAME_HEATSHIELD_WEST_PLACEHOLDER/$NAME_HEATSHIELD_WEST/g"     "$PACKAGES_DIR/tech_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_OFF_PLACEHOLDER/$NAME_HEATSHIELD_OFF/g"       "$PACKAGES_DIR/tech_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_AUTO_PLACEHOLDER/$NAME_HEATSHIELD_AUTO/g"     "$PACKAGES_DIR/tech_heatshield.yaml"
- 
+
   cp "$SCRIPT_DIR/template_automation_heatshield.yaml"                    "$AUTOMATIONS_DIR/tech_heatshield.yaml"
   sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                  "$AUTOMATIONS_DIR/tech_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_EAST_PLACEHOLDER/$NAME_HEATSHIELD_EAST/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
@@ -160,17 +160,25 @@ ch_heatshield() {
 case "$MODE" in
   all)
     ch_init
-    ch_system
+    ch_day_mode
+    ch_heatshield
     ch_motion
+    ch_reminder_alarm
     ;;
   init)
     ch_init
     ;;
-  system)
-    ch_system
+  day_mode)
+    ch_day_mode
+    ;;
+  heatshield)
+    ch_heatshield
     ;;
   motion)
     ch_motion
+    ;;
+  reminder)
+    ch_reminder_alarm
     ;;
 esac
 
