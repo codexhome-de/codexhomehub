@@ -14,9 +14,10 @@ ch_file() {
 }
 
 MODE="${1}"
-if [ "$MODE" != "all" ] && [ "$MODE" != "init" ] && [ "$MODE" != "motion" ] && [ "$MODE" != "system" ]; then
-  ch_err $LINENO "Usage: $0 [ all | init | day_mode | heatshield | motion | reminder ]"
-fi
+case "$MODE" in
+  all|init|day_mode|heatshield|motion|reminder) ;;
+  *) ch_err $LINENO "Usage: $0 [all|init|day_mode|heatshield|motion|reminder]" ;;
+esac
 
 DEPLOY_DATE=$(date +%Y%m%d)
 
@@ -25,7 +26,7 @@ HA_DIR="$(dirname "$SCRIPT_DIR")"
 PACKAGES_DIR="$HA_DIR/packages"
 AUTOMATIONS_DIR="$HA_DIR/automations"
 SENSORS_DIR="$SCRIPT_DIR/sensors"
-mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR"
+mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR" "$SENSORS_DIR"
 
 ch_file "$SCRIPT_DIR/ch_config.cfg" "$SCRIPT_DIR/template_config.cfg"
 source "$SCRIPT_DIR/ch_config.cfg"
