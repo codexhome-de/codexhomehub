@@ -153,9 +153,6 @@ ch_heatshield() {
   sed -i "s/HEATSHIELD_EAST_TIME_PLACEHOLDER/$HEATSHIELD_EAST_TIME/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
   sed -i "s/HEATSHIELD_SOUTH_TIME_PLACEHOLDER/$HEATSHIELD_SOUTH_TIME/g"   "$AUTOMATIONS_DIR/tech_heatshield.yaml"
   sed -i "s/HEATSHIELD_WEST_TIME_PLACEHOLDER/$HEATSHIELD_WEST_TIME/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/HEATSHIELD_TEMP_DIFF_PLACEHOLDER/$HEATSHIELD_TEMP_DIFF/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s|OUTSIDE_TEMP_SENSOR_PLACEHOLDER|$OUTSIDE_TEMP_SENSOR|g"       "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s|INSIDE_TEMP_SENSOR_PLACEHOLDER|$INSIDE_TEMP_SENSOR|g"         "$AUTOMATIONS_DIR/tech_heatshield.yaml"
 }
 
 case "$MODE" in
