@@ -108,6 +108,7 @@ ch_motion() {
 
     cp "$SCRIPT_DIR/template_package_motion.yaml"                                     "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                            "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s|SENSOR_PLACEHOLDER|$SENSORS_DIR|"                                       "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"                                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"                                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s/NAME_MOTION_DAY_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_DAY}/g"         "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"

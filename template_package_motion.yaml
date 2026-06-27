@@ -2,7 +2,7 @@
 group:
   ROOM_LOWER_PLACEHOLDER_motion_sensors:
     name: "NAME_MOTION_PLACEHOLDER Sensors"
-    entities: !include /homeassistant/codexhomehub/sensors/ROOM_LOWER_PLACEHOLDER_sensors.yaml
+    entities: !include /SENSOR_PLACEHOLDER/ROOM_LOWER_PLACEHOLDER_sensors.yaml
 
 input_boolean:
   ROOM_LOWER_PLACEHOLDER_motion_day:
