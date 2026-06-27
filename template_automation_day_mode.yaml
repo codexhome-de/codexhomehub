@@ -30,6 +30,11 @@
         - conditions:
             - condition: trigger
               id: evening
+            - condition: not
+              conditions:
+                - condition: state
+                  entity_id: input_select.tech_day_mode_hk
+                  state: "NAME_PARTY_PLACEHOLDER"
           sequence:
             - action: input_select.select_option
               target:
@@ -39,12 +44,25 @@
         - conditions:
             - condition: trigger
               id: night
+            - condition: not
+              conditions:
+                - condition: state
+                  entity_id: input_select.tech_day_mode_hk
+                  state: "NAME_PARTY_PLACEHOLDER"
           sequence:
             - action: input_select.select_option
               target:
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "NAME_NIGHT_PLACEHOLDER"
+        # Startup: preserve Party (sunrise is the only thing allowed to override it)
+        - conditions:
+            - condition: trigger
+              id: startup
+            - condition: state
+              entity_id: input_select.tech_day_mode_hk
+              state: "NAME_PARTY_PLACEHOLDER"
+          sequence: []
         # Startup: Day
         - conditions:
             - condition: trigger

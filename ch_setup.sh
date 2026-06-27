@@ -82,6 +82,7 @@ ch_day_mode() {
   sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s/NAME_EVENING_PLACEHOLDER/$NAME_EVENING/g"     "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s/NAME_NIGHT_PLACEHOLDER/$NAME_NIGHT/g"         "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s/NAME_PARTY_PLACEHOLDER/$NAME_PARTY/g"         "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s/SUNRISE_OFFSET_PLACEHOLDER/$SUNRISE_OFFSET/g" "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s/SUNSET_OFFSET_PLACEHOLDER/$SUNSET_OFFSET/g"   "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s/NIGHT_TIME_PLACEHOLDER/$NIGHT_TIME/g"         "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
