@@ -2,6 +2,9 @@
 - id: set_heatshield_mode
   alias: Set Heatshield Mode
   trigger:
+    - id: north
+      platform: time
+      at: "HEATSHIELD_NORTH_TIME_PLACEHOLDER"
     - id: east
       platform: time
       at: "HEATSHIELD_EAST_TIME_PLACEHOLDER"
@@ -17,6 +20,15 @@
       state: "NAME_HEATSHIELD_AUTO_PLACEHOLDER"
   action:
     - choose:
+        - conditions:
+            - condition: trigger
+              id: north
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.heatshield_mode_hk
+              data:
+                option: "NAME_HEATSHIELD_NORTH_PLACEHOLDER"
         - conditions:
             - condition: trigger
               id: east
@@ -56,6 +68,7 @@
             - condition: template
               value_template: >
                 {{ trigger.to_state.state in [
+                     'NAME_HEATSHIELD_NORTH_PLACEHOLDER',
                      'NAME_HEATSHIELD_EAST_PLACEHOLDER',
                      'NAME_HEATSHIELD_SOUTH_PLACEHOLDER',
                      'NAME_HEATSHIELD_WEST_PLACEHOLDER'
