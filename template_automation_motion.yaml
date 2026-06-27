@@ -80,7 +80,9 @@
                   state: "active"
             - condition: state
               entity_id: input_select.tech_day_mode_hk
-              state: "NAME_EVENING_PLACEHOLDER"
+              state:
+                - "NAME_EVENING_PLACEHOLDER"
+                - "NAME_PARTY_PLACEHOLDER"
           sequence:
             - service: input_boolean.turn_on
               target:

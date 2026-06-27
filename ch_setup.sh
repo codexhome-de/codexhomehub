@@ -123,6 +123,7 @@ ch_motion() {
     sed -i "s/NAME_DAY_PLACEHOLDER/${NAME_DAY}/g"           "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
     sed -i "s/NAME_EVENING_PLACEHOLDER/${NAME_EVENING}/g"   "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
     sed -i "s/NAME_NIGHT_PLACEHOLDER/${NAME_NIGHT}/g"       "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_PARTY_PLACEHOLDER/${NAME_PARTY}/g"       "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
 
     SENSOR_FILE="$SENSORS_DIR/${ROOM_LOWER}_sensors.yaml"
     if [ ! -f "$SENSOR_FILE" ]; then

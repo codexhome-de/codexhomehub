@@ -6,8 +6,5 @@ input_select:
       - "NAME_DAY_PLACEHOLDER"
       - "NAME_EVENING_PLACEHOLDER"
       - "NAME_NIGHT_PLACEHOLDER"
+      - "NAME_PARTY_PLACEHOLDER"
     initial: "NAME_EVENING_PLACEHOLDER"
-
-input_boolean:
-  party_mode_hk:
-    name: "NAME_PARTY_PLACEHOLDER"

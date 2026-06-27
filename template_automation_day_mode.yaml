@@ -27,9 +27,6 @@
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "NAME_DAY_PLACEHOLDER"
-            - action: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.party_mode_hk
         - conditions:
             - condition: trigger
               id: evening
@@ -63,9 +60,6 @@
                 entity_id: input_select.tech_day_mode_hk
               data:
                 option: "NAME_DAY_PLACEHOLDER"
-            - action: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.party_mode_hk
         # Startup: Night
         - conditions:
             - condition: trigger
