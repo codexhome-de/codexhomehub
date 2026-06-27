@@ -1,13 +1,13 @@
 #DEPLOY_PLACEHOLDER
 input_select:
   tech_day_mode_hk:
-    name: NAME_DAY_MODE_PLACEHOLDER
+    name: "NAME_DAY_MODE_PLACEHOLDER"
     options:
-      - NAME_DAY_PLACEHOLDER
-      - NAME_EVENING_PLACEHOLDER
-      - NAME_NIGHT_PLACEHOLDER
-    initial: NAME_EVENING_PLACEHOLDER
+      - "NAME_DAY_PLACEHOLDER"
+      - "NAME_EVENING_PLACEHOLDER"
+      - "NAME_NIGHT_PLACEHOLDER"
+    initial: "NAME_EVENING_PLACEHOLDER"
 
 input_boolean:
   party_mode_hk:
-    name: NAME_PARTY_PLACEHOLDER
+    name: "NAME_PARTY_PLACEHOLDER"
