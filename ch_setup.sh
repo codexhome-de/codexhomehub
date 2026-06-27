@@ -25,7 +25,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 HA_DIR="$(dirname "$SCRIPT_DIR")"
 PACKAGES_DIR="$HA_DIR/packages"
 AUTOMATIONS_DIR="$HA_DIR/automations"
-SENSORS_DIR="$SCRIPT_DIR/sensors"
+SENSORS_DIR="$SCRIPT_DIR/chsensors"
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR" "$SENSORS_DIR"
 
 ch_file "$SCRIPT_DIR/ch_config.cfg" "$SCRIPT_DIR/template_config.cfg"
@@ -69,35 +69,35 @@ EOF
 }
 
 ch_day_mode() {
-  cp "$SCRIPT_DIR/template_package_day_mode.yaml"         "$PACKAGES_DIR/tech_day_mode.yaml"
-  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$PACKAGES_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_DAY_MODE_PLACEHOLDER/$NAME_DAY_MODE/g"   "$PACKAGES_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$PACKAGES_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_EVENING_PLACEHOLDER/$NAME_EVENING/g"     "$PACKAGES_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_NIGHT_PLACEHOLDER/$NAME_NIGHT/g"         "$PACKAGES_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_PARTY_PLACEHOLDER/$NAME_PARTY/g"         "$PACKAGES_DIR/tech_day_mode.yaml"
+  cp "$SCRIPT_DIR/template_package_day_mode.yaml"         "$PACKAGES_DIR/chpackage_day_mode.yaml"
+  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$PACKAGES_DIR/chpackage_day_mode.yaml"
+  sed -i "s/NAME_DAY_MODE_PLACEHOLDER/$NAME_DAY_MODE/g"   "$PACKAGES_DIR/chpackage_day_mode.yaml"
+  sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$PACKAGES_DIR/chpackage_day_mode.yaml"
+  sed -i "s/NAME_EVENING_PLACEHOLDER/$NAME_EVENING/g"     "$PACKAGES_DIR/chpackage_day_mode.yaml"
+  sed -i "s/NAME_NIGHT_PLACEHOLDER/$NAME_NIGHT/g"         "$PACKAGES_DIR/chpackage_day_mode.yaml"
+  sed -i "s/NAME_PARTY_PLACEHOLDER/$NAME_PARTY/g"         "$PACKAGES_DIR/chpackage_day_mode.yaml"
 
-  cp "$SCRIPT_DIR/template_automation_day_mode.yaml"      "$AUTOMATIONS_DIR/tech_day_mode.yaml"
-  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$AUTOMATIONS_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_EVENING_PLACEHOLDER/$NAME_EVENING/g"     "$AUTOMATIONS_DIR/tech_day_mode.yaml"
-  sed -i "s/NAME_NIGHT_PLACEHOLDER/$NAME_NIGHT/g"         "$AUTOMATIONS_DIR/tech_day_mode.yaml"
-  sed -i "s/SUNRISE_OFFSET_PLACEHOLDER/$SUNRISE_OFFSET/g" "$AUTOMATIONS_DIR/tech_day_mode.yaml"
-  sed -i "s/SUNSET_OFFSET_PLACEHOLDER/$SUNSET_OFFSET/g"   "$AUTOMATIONS_DIR/tech_day_mode.yaml"
-  sed -i "s/NIGHT_TIME_PLACEHOLDER/$NIGHT_TIME/g"         "$AUTOMATIONS_DIR/tech_day_mode.yaml"
+  cp "$SCRIPT_DIR/template_automation_day_mode.yaml"      "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s/NAME_EVENING_PLACEHOLDER/$NAME_EVENING/g"     "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s/NAME_NIGHT_PLACEHOLDER/$NAME_NIGHT/g"         "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s/SUNRISE_OFFSET_PLACEHOLDER/$SUNRISE_OFFSET/g" "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s/SUNSET_OFFSET_PLACEHOLDER/$SUNSET_OFFSET/g"   "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  sed -i "s/NIGHT_TIME_PLACEHOLDER/$NIGHT_TIME/g"         "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
 }
 
 ch_reminder_alarm() {
-  cp "$SCRIPT_DIR/template_package_reminder.yaml"                     "$PACKAGES_DIR/tech_reminder.yaml"
-  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"              "$PACKAGES_DIR/tech_reminder.yaml"
-  sed -i "s/NAME_REMINDER_ALARM_PLACEHOLDER/$NAME_REMINDER_ALARM/g"   "$PACKAGES_DIR/tech_reminder.yaml"
-  sed -i "s/NAME_REMINDER_PLACEHOLDER/$NAME_REMINDER/g"               "$PACKAGES_DIR/tech_reminder.yaml"
-  sed -i "s/NAME_REMINDER_SENSOR_PLACEHOLDER/$NAME_REMINDER_SENSOR/g" "$PACKAGES_DIR/tech_reminder.yaml"
+  cp "$SCRIPT_DIR/template_package_reminder.yaml"                     "$PACKAGES_DIR/chpackage_reminder.yaml"
+  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"              "$PACKAGES_DIR/chpackage_reminder.yaml"
+  sed -i "s/NAME_REMINDER_ALARM_PLACEHOLDER/$NAME_REMINDER_ALARM/g"   "$PACKAGES_DIR/chpackage_reminder.yaml"
+  sed -i "s/NAME_REMINDER_PLACEHOLDER/$NAME_REMINDER/g"               "$PACKAGES_DIR/chpackage_reminder.yaml"
+  sed -i "s/NAME_REMINDER_SENSOR_PLACEHOLDER/$NAME_REMINDER_SENSOR/g" "$PACKAGES_DIR/chpackage_reminder.yaml"
 }
 
 ch_motion() {
-  ch_file "$SCRIPT_DIR/ch_rooms.cfg" "$SCRIPT_DIR/template_rooms.cfg"
-  readarray -t ROOMS < "$SCRIPT_DIR/ch_rooms.cfg"
+  ch_file "$SCRIPT_DIR/ch_motion.cfg" "$SCRIPT_DIR/template_motion.cfg"
+  readarray -t ROOMS < "$SCRIPT_DIR/ch_motion.cfg"
 
   for room in "${ROOMS[@]}"; do
     ROOM_UPPER="$room"
@@ -105,24 +105,23 @@ ch_motion() {
       | tr '[:upper:]' '[:lower:]' \
       | tr ' ' '_' | tr '-' '_' \
       | sed -e 's/Ä/ae/g; s/Ö/oe/g; s/Ü/ue/g; s/ä/ae/g; s/ö/oe/g; s/ü/ue/g; s/ß/ss/g')
-    ROOM_LOWER=$(echo "$ROOM_LOWER" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr '-' '_')
 
-    cp "$SCRIPT_DIR/template_package_motion.yaml"                                     "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                            "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"                                 "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"                                 "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_DAY_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_DAY}/g"         "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_EVENING_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_EVENING}/g" "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_NIGHT_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_NIGHT}/g"     "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_MOTION_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION}/g"                 "$PACKAGES_DIR/package_motion_${ROOM_LOWER}.yaml"
+    cp "$SCRIPT_DIR/template_package_motion.yaml"                                     "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                            "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"                                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"                                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_DAY_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_DAY}/g"         "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_EVENING_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_EVENING}/g" "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_NIGHT_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_NIGHT}/g"     "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_MOTION_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION}/g"                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
 
-    cp "$SCRIPT_DIR/template_automation_motion.yaml"        "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"       "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"       "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_DAY_PLACEHOLDER/${NAME_DAY}/g"           "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_EVENING_PLACEHOLDER/${NAME_EVENING}/g"   "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
-    sed -i "s/NAME_NIGHT_PLACEHOLDER/${NAME_NIGHT}/g"       "$AUTOMATIONS_DIR/automation_motion_${ROOM_LOWER}.yaml"
+    cp "$SCRIPT_DIR/template_automation_motion.yaml"        "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"       "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"       "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_DAY_PLACEHOLDER/${NAME_DAY}/g"           "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_EVENING_PLACEHOLDER/${NAME_EVENING}/g"   "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/NAME_NIGHT_PLACEHOLDER/${NAME_NIGHT}/g"       "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
 
     SENSOR_FILE="$SENSORS_DIR/${ROOM_LOWER}_sensors.yaml"
     if [ ! -f "$SENSOR_FILE" ]; then
@@ -134,25 +133,25 @@ EOF
 }
 
 ch_heatshield() {
-  cp "$SCRIPT_DIR/template_package_heatshield.yaml"                       "$PACKAGES_DIR/tech_heatshield.yaml"
-  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                  "$PACKAGES_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_MODE_PLACEHOLDER/$NAME_HEATSHIELD_MODE/g"     "$PACKAGES_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_EAST_PLACEHOLDER/$NAME_HEATSHIELD_EAST/g"     "$PACKAGES_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_SOUTH_PLACEHOLDER/$NAME_HEATSHIELD_SOUTH/g"   "$PACKAGES_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_WEST_PLACEHOLDER/$NAME_HEATSHIELD_WEST/g"     "$PACKAGES_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_OFF_PLACEHOLDER/$NAME_HEATSHIELD_OFF/g"       "$PACKAGES_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_AUTO_PLACEHOLDER/$NAME_HEATSHIELD_AUTO/g"     "$PACKAGES_DIR/tech_heatshield.yaml"
+  cp "$SCRIPT_DIR/template_package_heatshield.yaml"                       "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                  "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_MODE_PLACEHOLDER/$NAME_HEATSHIELD_MODE/g"     "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_EAST_PLACEHOLDER/$NAME_HEATSHIELD_EAST/g"     "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_SOUTH_PLACEHOLDER/$NAME_HEATSHIELD_SOUTH/g"   "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_WEST_PLACEHOLDER/$NAME_HEATSHIELD_WEST/g"     "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_OFF_PLACEHOLDER/$NAME_HEATSHIELD_OFF/g"       "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_AUTO_PLACEHOLDER/$NAME_HEATSHIELD_AUTO/g"     "$PACKAGES_DIR/chpackage_heatshield.yaml"
 
-  cp "$SCRIPT_DIR/template_automation_heatshield.yaml"                    "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                  "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_EAST_PLACEHOLDER/$NAME_HEATSHIELD_EAST/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_SOUTH_PLACEHOLDER/$NAME_HEATSHIELD_SOUTH/g"   "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_WEST_PLACEHOLDER/$NAME_HEATSHIELD_WEST/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_OFF_PLACEHOLDER/$NAME_HEATSHIELD_OFF/g"       "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/NAME_HEATSHIELD_AUTO_PLACEHOLDER/$NAME_HEATSHIELD_AUTO/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/HEATSHIELD_EAST_TIME_PLACEHOLDER/$HEATSHIELD_EAST_TIME/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/HEATSHIELD_SOUTH_TIME_PLACEHOLDER/$HEATSHIELD_SOUTH_TIME/g"   "$AUTOMATIONS_DIR/tech_heatshield.yaml"
-  sed -i "s/HEATSHIELD_WEST_TIME_PLACEHOLDER/$HEATSHIELD_WEST_TIME/g"     "$AUTOMATIONS_DIR/tech_heatshield.yaml"
+  cp "$SCRIPT_DIR/template_automation_heatshield.yaml"                    "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                  "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_EAST_PLACEHOLDER/$NAME_HEATSHIELD_EAST/g"     "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_SOUTH_PLACEHOLDER/$NAME_HEATSHIELD_SOUTH/g"   "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_WEST_PLACEHOLDER/$NAME_HEATSHIELD_WEST/g"     "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_OFF_PLACEHOLDER/$NAME_HEATSHIELD_OFF/g"       "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/NAME_HEATSHIELD_AUTO_PLACEHOLDER/$NAME_HEATSHIELD_AUTO/g"     "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/HEATSHIELD_EAST_TIME_PLACEHOLDER/$HEATSHIELD_EAST_TIME/g"     "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/HEATSHIELD_SOUTH_TIME_PLACEHOLDER/$HEATSHIELD_SOUTH_TIME/g"   "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  sed -i "s/HEATSHIELD_WEST_TIME_PLACEHOLDER/$HEATSHIELD_WEST_TIME/g"     "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
 }
 
 case "$MODE" in
