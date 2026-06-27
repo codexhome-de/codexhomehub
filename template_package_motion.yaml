@@ -1,21 +1,21 @@
 #DEPLOY_PLACEHOLDER
 group:
-  room_motion_sensors:
+  ROOM_LOWER_PLACEHOLDER_motion_sensors:
     name: "NAME_MOTION_PLACEHOLDER Sensors"
     entities: !include /homeassistant/codexhomehub/sensors/ROOM_LOWER_PLACEHOLDER_sensors.yaml
 
 input_boolean:
-  room_motion_day:
+  ROOM_LOWER_PLACEHOLDER_motion_day:
     name: "NAME_MOTION_DAY_PLACEHOLDER"
 
-  room_motion_evening:
+  ROOM_LOWER_PLACEHOLDER_motion_evening:
     name: "NAME_MOTION_EVENING_PLACEHOLDER"
 
-  room_motion_night:
+  ROOM_LOWER_PLACEHOLDER_motion_night:
     name: "NAME_MOTION_NIGHT_PLACEHOLDER"
 
 timer:
-  room_motion_hold:
+  ROOM_LOWER_PLACEHOLDER_motion_hold:
     name: "NAME_MOTION_PLACEHOLDER Hold"
     duration: "00:01:00"
 
