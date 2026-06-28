@@ -9,11 +9,9 @@ input_select:
       - "NAME_HEATSHIELD_WEST_PLACEHOLDER"
       - "NAME_HEATSHIELD_OFF_PLACEHOLDER"
       - "NAME_HEATSHIELD_AUTO_PLACEHOLDER"
-    initial: "NAME_HEATSHIELD_OFF_PLACEHOLDER"
 
   heatshield_last_persistent:
     name: "Heatshield Last Persistent Mode"
     options:
       - "NAME_HEATSHIELD_OFF_PLACEHOLDER"
       - "NAME_HEATSHIELD_AUTO_PLACEHOLDER"
-    initial: "NAME_HEATSHIELD_OFF_PLACEHOLDER"
