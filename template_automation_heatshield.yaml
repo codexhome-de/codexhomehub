@@ -1,4 +1,19 @@
 #DEPLOY_PLACEHOLDER
+- id: heatshield_mode_default_on_unknown
+  alias: Heatshield Mode Default On Unknown
+  trigger:
+    - platform: homeassistant
+      event: start
+  condition:
+    - condition: state
+      entity_id: input_select.heatshield_mode_hk
+      state: "unknown"
+  action:
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.heatshield_mode_hk
+      data:
+        option: "NAME_HEATSHIELD_OFF_PLACEHOLDER"
 - id: set_heatshield_mode
   alias: Set Heatshield Mode
   trigger:
