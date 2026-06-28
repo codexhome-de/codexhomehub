@@ -61,34 +61,31 @@
   trigger:
     - platform: state
       entity_id: input_select.heatshield_mode_hk
+  condition:
+    - condition: template
+      value_template: >
+        {{ trigger.to_state.state in [
+             'NAME_HEATSHIELD_NORTH_PLACEHOLDER',
+             'NAME_HEATSHIELD_EAST_PLACEHOLDER',
+             'NAME_HEATSHIELD_SOUTH_PLACEHOLDER',
+             'NAME_HEATSHIELD_WEST_PLACEHOLDER'
+           ] }}
+    - condition: template
+      value_template: >
+        {{ trigger.from_state.state in [
+             'NAME_HEATSHIELD_OFF_PLACEHOLDER',
+             'NAME_HEATSHIELD_AUTO_PLACEHOLDER'
+           ] }}
+  variables:
+    restore_to: "{{ trigger.from_state.state }}"
   action:
-    - choose:
-        # The mode just became East, South, or West
-        - conditions:
-            - condition: template
-              value_template: >
-                {{ trigger.to_state.state in [
-                     'NAME_HEATSHIELD_NORTH_PLACEHOLDER',
-                     'NAME_HEATSHIELD_EAST_PLACEHOLDER',
-                     'NAME_HEATSHIELD_SOUTH_PLACEHOLDER',
-                     'NAME_HEATSHIELD_WEST_PLACEHOLDER'
-                   ] }}
-          sequence:
-            - if:
-                - condition: template
-                  value_template: >
-                    {{ trigger.from_state.state in [
-                         'NAME_HEATSHIELD_OFF_PLACEHOLDER',
-                         'NAME_HEATSHIELD_AUTO_PLACEHOLDER'
-                       ] }}
-              then:
-                - action: input_select.select_option
-                  target:
-                    entity_id: input_select.heatshield_last_persistent
-                  data:
-                    option: "{{ trigger.from_state.state }}"
-            - action: input_select.select_option
-              target:
-                entity_id: input_select.heatshield_mode_hk
-              data:
-                option: "{{ states('input_select.heatshield_last_persistent') }}"
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.heatshield_last_persistent
+      data:
+        option: "{{ restore_to }}"
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.heatshield_mode_hk
+      data:
+        option: "{{ restore_to }}"
