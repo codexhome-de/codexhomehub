@@ -21,20 +21,20 @@ esac
 
 DEPLOY_DATE=$(date +%Y%m%d)
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-HA_DIR="$(dirname "$SCRIPT_DIR")"
+HA_DIR="/homeassistant"
+CH_DIR="$HA_DIR/codexhomehub"
 PACKAGES_DIR="$HA_DIR/packages"
 AUTOMATIONS_DIR="$HA_DIR/automations"
-SENSORS_DIR="$SCRIPT_DIR/chsensors"
+SENSORS_DIR="$CH_DIR/sensors"
 mkdir -p "$PACKAGES_DIR" "$AUTOMATIONS_DIR" "$SENSORS_DIR"
 
-ch_file "$SCRIPT_DIR/ch_config.cfg" "$SCRIPT_DIR/template_config.cfg"
-source "$SCRIPT_DIR/ch_config.cfg"
+ch_file "$CH_DIR/ch_config.cfg" "$CH_DIR/template_config.cfg"
+source "$CH_DIR/ch_config.cfg"
 
 if [ "$LANGUAGE" != "DE" ] && [ "$LANGUAGE" != "EN" ]; then
   ch_err $LINENO "Error: LANGUAGE=\"$LANGUAGE\" is invalid in $CH_CONFIG — must be DE or EN"
 fi
-source "$SCRIPT_DIR/template_lang_$LANGUAGE.cfg"
+source "$CH_DIR/template_lang_$LANGUAGE.cfg"
 
 ch_init() {
   HA_CONFIG="$HA_DIR/configuration.yaml"
@@ -69,7 +69,7 @@ EOF
 }
 
 ch_day_mode() {
-  cp "$SCRIPT_DIR/template_package_day_mode.yaml"         "$PACKAGES_DIR/chpackage_day_mode.yaml"
+  cp "$CH_DIR/template_package_day_mode.yaml"         "$PACKAGES_DIR/chpackage_day_mode.yaml"
   sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$PACKAGES_DIR/chpackage_day_mode.yaml"
   sed -i "s/NAME_DAY_MODE_PLACEHOLDER/$NAME_DAY_MODE/g"   "$PACKAGES_DIR/chpackage_day_mode.yaml"
   sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$PACKAGES_DIR/chpackage_day_mode.yaml"
@@ -77,7 +77,7 @@ ch_day_mode() {
   sed -i "s/NAME_NIGHT_PLACEHOLDER/$NAME_NIGHT/g"         "$PACKAGES_DIR/chpackage_day_mode.yaml"
   sed -i "s/NAME_PARTY_PLACEHOLDER/$NAME_PARTY/g"         "$PACKAGES_DIR/chpackage_day_mode.yaml"
 
-  cp "$SCRIPT_DIR/template_automation_day_mode.yaml"      "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
+  cp "$CH_DIR/template_automation_day_mode.yaml"      "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s/NAME_DAY_PLACEHOLDER/$NAME_DAY/g"             "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
   sed -i "s/NAME_EVENING_PLACEHOLDER/$NAME_EVENING/g"     "$AUTOMATIONS_DIR/chautomation_day_mode.yaml"
@@ -89,7 +89,7 @@ ch_day_mode() {
 }
 
 ch_reminder_alarm() {
-  cp "$SCRIPT_DIR/template_package_reminder.yaml"                     "$PACKAGES_DIR/chpackage_reminder.yaml"
+  cp "$CH_DIR/template_package_reminder.yaml"                     "$PACKAGES_DIR/chpackage_reminder.yaml"
   sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"              "$PACKAGES_DIR/chpackage_reminder.yaml"
   sed -i "s/NAME_REMINDER_ALARM_PLACEHOLDER/$NAME_REMINDER_ALARM/g"   "$PACKAGES_DIR/chpackage_reminder.yaml"
   sed -i "s/NAME_REMINDER_PLACEHOLDER/$NAME_REMINDER/g"               "$PACKAGES_DIR/chpackage_reminder.yaml"
@@ -97,8 +97,8 @@ ch_reminder_alarm() {
 }
 
 ch_motion() {
-  ch_file "$SCRIPT_DIR/ch_motion.cfg" "$SCRIPT_DIR/template_motion.cfg"
-  readarray -t ROOMS < "$SCRIPT_DIR/ch_motion.cfg"
+  ch_file "$CH_DIR/ch_motion.cfg" "$CH_DIR/template_motion.cfg"
+  readarray -t ROOMS < "$CH_DIR/ch_motion.cfg"
 
   for room in "${ROOMS[@]}"; do
     ROOM_UPPER="$room"
@@ -107,7 +107,7 @@ ch_motion() {
       | tr ' ' '_' | tr '-' '_' \
       | sed -e 's/Ä/ae/g; s/Ö/oe/g; s/Ü/ue/g; s/ä/ae/g; s/ö/oe/g; s/ü/ue/g; s/ß/ss/g')
 
-    cp "$SCRIPT_DIR/template_package_motion.yaml"                                     "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    cp "$CH_DIR/template_package_motion.yaml"                                         "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                            "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s|SENSOR_PLACEHOLDER|$SENSORS_DIR|"                                       "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"                                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
@@ -117,7 +117,7 @@ ch_motion() {
     sed -i "s/NAME_MOTION_NIGHT_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_NIGHT}/g"     "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s/NAME_MOTION_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION}/g"                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
 
-    cp "$SCRIPT_DIR/template_automation_motion.yaml"        "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
+    cp "$CH_DIR/template_automation_motion.yaml"        "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
     sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
     sed -i "s/ROOM_UPPER_PLACEHOLDER/${ROOM_UPPER}/g"       "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
     sed -i "s/ROOM_LOWER_PLACEHOLDER/${ROOM_LOWER}/g"       "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
@@ -136,7 +136,7 @@ EOF
 }
 
 ch_heatshield() {
-  cp "$SCRIPT_DIR/template_package_heatshield.yaml"                       "$PACKAGES_DIR/chpackage_heatshield.yaml"
+  cp "$CH_DIR/template_package_heatshield.yaml"                       "$PACKAGES_DIR/chpackage_heatshield.yaml"
   sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                  "$PACKAGES_DIR/chpackage_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_MODE_PLACEHOLDER/$NAME_HEATSHIELD_MODE/g"     "$PACKAGES_DIR/chpackage_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_NORTH_PLACEHOLDER/$NAME_HEATSHIELD_NORTH/g"   "$PACKAGES_DIR/chpackage_heatshield.yaml"
@@ -146,7 +146,7 @@ ch_heatshield() {
   sed -i "s/NAME_HEATSHIELD_OFF_PLACEHOLDER/$NAME_HEATSHIELD_OFF/g"       "$PACKAGES_DIR/chpackage_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_AUTO_PLACEHOLDER/$NAME_HEATSHIELD_AUTO/g"     "$PACKAGES_DIR/chpackage_heatshield.yaml"
 
-  cp "$SCRIPT_DIR/template_automation_heatshield.yaml"                    "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
+  cp "$CH_DIR/template_automation_heatshield.yaml"                    "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
   sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"                  "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_NORTH_PLACEHOLDER/$NAME_HEATSHIELD_NORTH/g"   "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
   sed -i "s/NAME_HEATSHIELD_EAST_PLACEHOLDER/$NAME_HEATSHIELD_EAST/g"     "$AUTOMATIONS_DIR/chautomation_heatshield.yaml"
