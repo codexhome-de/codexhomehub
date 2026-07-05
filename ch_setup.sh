@@ -21,7 +21,7 @@ esac
 
 DEPLOY_DATE=$(date +%Y%m%d)
 
-HA_DIR="/homeassistant"
+HA_DIR="/config"
 CH_DIR="$HA_DIR/codexhomehub"
 PACKAGES_DIR="$HA_DIR/packages"
 AUTOMATIONS_DIR="$HA_DIR/automations"
@@ -63,7 +63,7 @@ EOF
   touch "$PROFILE"
   if ! grep -q "alias ch_update" "$PROFILE"; then
     cat >> "$PROFILE" << 'EOF'
-alias ch_update='cd /homeassistant/codexhomehub && git fetch origin && git reset --hard origin/master'
+alias ch_update='cd /config/codexhomehub && git fetch origin && git reset --hard origin/master'
 EOF
   fi
 }
