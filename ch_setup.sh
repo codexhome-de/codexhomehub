@@ -15,7 +15,7 @@ ch_file() {
 
 MODE="${1}"
 case "$MODE" in
-  all|init|day_mode|heatshield|motion|reminder) ;;
+  all|debug|init|day_mode|heatshield|motion|reminder) ;;
   *) ch_err $LINENO "Usage: $0 [all|init|day_mode|heatshield|motion|reminder]" ;;
 esac
 
@@ -167,6 +167,7 @@ case "$MODE" in
     ch_heatshield
     ch_motion
     ch_reminder_alarm
+    ha core restart
     ;;
   init)
     ch_init
@@ -184,5 +185,3 @@ case "$MODE" in
     ch_reminder_alarm
     ;;
 esac
-
-ha core restart
