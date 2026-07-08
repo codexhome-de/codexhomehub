@@ -22,26 +22,26 @@ timer:
 template:
   - binary_sensor:
       - name: "NAME_MOTION_DAY_PLACEHOLDER"
-        unique_id: ROOM_LOWER_PLACEHOLDER_motion_day_hk
-        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_day_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_DAY_PLACEHOLDER_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_DAY_PLACEHOLDER_hk
         device_class: motion
         state: "{{ is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_day', 'on') }}"
 
       - name: "NAME_MOTION_EVENING_PLACEHOLDER"
-        unique_id: ROOM_LOWER_PLACEHOLDER_motion_evening_hk
-        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_evening_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_EVENING_PLACEHOLDER_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_EVENING_PLACEHOLDER_hk
         device_class: motion
         state: "{{ is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_evening', 'on') }}"
 
       - name: "NAME_MOTION_NIGHT_PLACEHOLDER"
-        unique_id: ROOM_LOWER_PLACEHOLDER_motion_night_hk
-        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_night_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_NIGHT_PLACEHOLDER_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_NIGHT_PLACEHOLDER_hk
         device_class: motion
         state: "{{ is_state('input_boolean.ROOM_LOWER_PLACEHOLDER_motion_night', 'on') }}"
 
       - name: "NAME_MOTION_PLACEHOLDER"
-        unique_id: ROOM_LOWER_PLACEHOLDER_motion_hk
-        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_motion_hk
+        unique_id: ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_PLACEHOLDER_hk
+        default_entity_id: binary_sensor.ROOM_LOWER_PLACEHOLDER_SLUG_MOTION_PLACEHOLDER_hk
         device_class: motion
         state: >
           {{

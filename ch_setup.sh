@@ -94,6 +94,7 @@ ch_reminder_alarm() {
   sed -i "s/NAME_REMINDER_ALARM_PLACEHOLDER/$NAME_REMINDER_ALARM/g"   "$PACKAGES_DIR/chpackage_reminder.yaml"
   sed -i "s/NAME_REMINDER_PLACEHOLDER/$NAME_REMINDER/g"               "$PACKAGES_DIR/chpackage_reminder.yaml"
   sed -i "s/NAME_REMINDER_SENSOR_PLACEHOLDER/$NAME_REMINDER_SENSOR/g" "$PACKAGES_DIR/chpackage_reminder.yaml"
+  sed -i "s/SLUG_REMINDER_SENSOR_PLACEHOLDER/$SLUG_REMINDER_SENSOR/g" "$PACKAGES_DIR/chpackage_reminder.yaml"
 }
 
 ch_motion() {
@@ -116,6 +117,10 @@ ch_motion() {
     sed -i "s/NAME_MOTION_EVENING_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_EVENING}/g" "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s/NAME_MOTION_NIGHT_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION_NIGHT}/g"     "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
     sed -i "s/NAME_MOTION_PLACEHOLDER/${ROOM_UPPER} ${NAME_MOTION}/g"                 "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/SLUG_MOTION_DAY_PLACEHOLDER/${SLUG_MOTION_DAY}/g"                       "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/SLUG_MOTION_EVENING_PLACEHOLDER/${SLUG_MOTION_EVENING}/g"               "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/SLUG_MOTION_NIGHT_PLACEHOLDER/${SLUG_MOTION_NIGHT}/g"                   "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
+    sed -i "s/SLUG_MOTION_PLACEHOLDER/${SLUG_MOTION}/g"                               "$PACKAGES_DIR/chpackage_motion_${ROOM_LOWER}.yaml"
 
     cp "$CH_DIR/template_automation_motion.yaml"        "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
     sed -i "s|#DEPLOY_PLACEHOLDER|#Deployed $DEPLOY_DATE|"  "$AUTOMATIONS_DIR/chautomation_motion_${ROOM_LOWER}.yaml"
