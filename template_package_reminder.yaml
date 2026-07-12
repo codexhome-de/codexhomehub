@@ -9,7 +9,7 @@ input_boolean:
 template:
   - binary_sensor:
       - name: "NAME_REMINDER_SENSOR_PLACEHOLDER"
-        unique_id: SLUG_REMINDER_SENSOR_PLACEHOLDER
-        default_entity_id: binary_sensor.SLUG_REMINDER_SENSOR_PLACEHOLDER_hk
+        unique_id: reminder_DEPLOY_ID_PLACEHOLDER
+        default_entity_id: binary_sensor.reminder_DEPLOY_ID_PLACEHOLDER_hk
         device_class: smoke
         state: "{{ is_state('input_boolean.reminder_trigger_hk', 'on') }}"
